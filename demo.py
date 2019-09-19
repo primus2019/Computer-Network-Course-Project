@@ -1,4 +1,6 @@
 from poplib import POP3_SSL
+import os
+import re
 
 
 popHost = 'pop.163.com'
@@ -31,15 +33,44 @@ def retrMail(mailLink):
         mail_info = mail_list[0].split(b' ')
         number = mail_info[0]
         # mail = mailLink.retr(number)[1]
-        print(mailLink.retr(2))
-        
-        
-        return content
+        for i in range(1, 10):
+            with open('log' + (str)(i) + '.txt', 'a+') as file:
+                for info in mailLink.retr(i)[1:][0]:
+                    file.write(info.decode('utf-8'))
+                    file.write('\n')
+            with open('log' + (str)(i) + '.txt', 'r+') as file:
+                content = file.read().splitlines()
+                print('file: ' + (str)(i))
+                for line in content:
+                    loc_content_type = line.find('Content-Type: ')
+                    loc_date    = line.find('Date: ')
+                    loc_from    = line.find('From: ')
+                    loc_to      = line.find('To: ')
+                    loc_subject = line.find('Subject: ')
+                    loc_cc      = line.find('Cc: ')
+                    obj_content_type = re.match(r'Content-Type: (.*);', line, re.M|re.I)
+                    if obj_content_type != None:
+                        print(obj_content_type.group(1))
+                    # if loc_content_type != -1:
+                    #     print('content-type:' + line[loc_content_type + 14:])
+                    # if loc_date != -1:
+                    #     print(' date:       ' + line[loc_date + 6:])
+                    # if loc_from != -1:
+                    #     print(' from:       ' + line[loc_from + 6:])
+                    # if loc_to != -1:
+                    #     print(' to:         ' + line[loc_to + 4:])
+                    # if loc_subject != -1:
+                    #     print(' subject:    ' + line[loc_subject + 9:])
+                    # if loc_cc != -1:
+                    #     print('cc:          ' + line[loc_cc + 4])
+        return None
     except Exception as e:
         print(str(e))
         return None
 
 
 if __name__ == '__main__':
+    for i in range(1, 10):
+        open('log' + (str)(i) + '.txt', 'w').close()
     mailLink = login()
     print(retrMail(mailLink))
