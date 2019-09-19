@@ -8,15 +8,15 @@
 
   - 用Python搭建实现以下功能的GUI：
 
-    - [ ] GUI界面搭建
-    - [ ] 登陆常用邮箱
+    - [ ] GUI界面搭建(Tkinter)
+    - [ ] 登陆常用邮箱(poplib, temp)
       - [ ] 163
       - [ ] QQ
       - [ ] outlook
       - [ ] mails.tsinghua
       - [ ] sem.tsinghua
 
-    - [ ] 收取和查看已有邮件
+    - [ ] 收取和查看已有邮件(re, base64, quoari)
       - [ ] 20天
       - [ ] 支持刷新
       - [ ] 更久（根据需要加载）
