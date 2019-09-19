@@ -35,7 +35,7 @@
 ##### MIME 协议
 
 - 常见格式为：
-  - ![snip_1](misc\snip_1.png)
+  - ![snip_1](misc/snip_1.png)
   - 其中：
     - 标红框的是基本结构，包括邮件的Send address, Date, From, To,  Subject等
     - 表绿色框的是MIME协议下分隔各个邮件数据的标识符boundary
