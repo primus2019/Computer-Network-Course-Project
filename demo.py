@@ -25,7 +25,10 @@ def login():
         quit()
 
 
-def retrMail(mailLink):
+def retrMail(mailLink, retr_num):
+    '''retr existing mails in the logged mailbox
+
+    '''
     try:
         mail_list = mailLink.list()[1]
         if len(mail_list) == 0:
@@ -33,12 +36,12 @@ def retrMail(mailLink):
         mail_info = mail_list[0].split(b' ')
         number = mail_info[0]
         # mail = mailLink.retr(number)[1]
-        for i in range(1, 10):
-            with open('log' + (str)(i) + '.txt', 'a+') as file:
+        for i in range(1, retr_num):
+            with open('mail_' + (str)(i) + '.log', 'a+', encoding='utf-8') as file:
                 for info in mailLink.retr(i)[1:][0]:
                     file.write(info.decode('utf-8'))
                     file.write('\n')
-            with open('log' + (str)(i) + '.txt', 'r+') as file:
+            with open('mail_' + (str)(i) + '.log', 'r+', encoding='utf-8') as file:
                 content = file.read().splitlines()
                 print('file: ' + (str)(i))
                 for line in content:
@@ -70,7 +73,9 @@ def retrMail(mailLink):
 
 
 if __name__ == '__main__':
+    retr_num = 19
+
     for i in range(1, 10):
-        open('log' + (str)(i) + '.txt', 'w').close()
+        open('mail_' + (str)(i) + '.log', 'w+').close()
     mailLink = login()
-    print(retrMail(mailLink))
+    print(retrMail(mailLink, retr_num))

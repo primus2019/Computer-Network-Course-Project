@@ -55,3 +55,13 @@
     - B: base64
     - Q: quoted-printable
     - 7bit or 8bit: not found yet
+
+##### Tkinter
+
+wedgets
+
+- How Listbox and Other wedgets link
+  - Listbox.curselection() 
+    - returns the index of chosen items preset in the listbox object
+- How to present MIME context in Tkinter GUI
+- How to refresh mailbox
