@@ -10,16 +10,16 @@
 
     - [ ] GUI界面搭建(Tkinter)
     - [ ] 登陆常用邮箱(poplib, temp)
-      - [ ] 163
+      - [x] 163
       - [ ] QQ
       - [ ] outlook
       - [ ] mails.tsinghua
       - [ ] sem.tsinghua
 
-    - [ ] 收取和查看已有邮件(re, base64, quoari)
-      - [ ] 20天
+    - [x] 收取和查看已有邮件(re, base64, quoari)
+      - [x] 所有时间
       - [ ] 支持刷新
-      - [ ] 更久（根据需要加载）
+      - [ ] 根据需要加载
     - [ ] 删除邮件
     - [ ] 回复/发送邮件
     - [ ] 退出邮箱
@@ -56,9 +56,28 @@
     - Q: quoted-printable
     - 7bit or 8bit: not found yet
 
+##### 处理MIME协议格式的初步设想
+
+- 获得邮件初始信息
+- capture信件基本信息
+  - 包括
+    - from
+    - to
+    - date
+    - cc
+    - boundary
+- 根据boundary获取信件内容
+- 根据charset, content-transfer-encoding正确编译数据
+- 根据content-type显示不同内容
+
+##### 难点
+
+- 回信的识别和处理
+- 附件的识别和处理
+
 ##### Tkinter
 
-wedgets
+wedgetsxuan'y
 
 - How Listbox and Other wedgets link
   - Listbox.curselection() 
