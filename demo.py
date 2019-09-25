@@ -78,27 +78,49 @@ def retrMail(mailLink, retr_num = 0):
                 content = file.read().splitlines()
                 print('file: ' + (str)(i))
                 for line in content:
-                    loc_content_type = line.find('Content-Type: ')
-                    loc_date    = line.find('Date: ')
-                    loc_from    = line.find('From: ')
-                    loc_to      = line.find('To: ')
-                    loc_subject = line.find('Subject: ')
-                    loc_cc      = line.find('Cc: ')
-                    obj_content_type = re.match(r'Content-Type: (.*);', line, re.M|re.I)
-                    # if obj_content_type != None:
-                    #     print(obj_content_type.group(1))
-                    if loc_content_type != -1:
-                        print('content-type:' + line[loc_content_type + 14:])
-                    if loc_date != -1:
-                        print(' date:       ' + line[loc_date + 6:])
-                    if loc_from != -1:
-                        print(' from:       ' + line[loc_from + 6:])
-                    if loc_to != -1:
-                        print(' to:         ' + line[loc_to + 4:])
-                    if loc_subject != -1:
-                        print(' subject:    ' + line[loc_subject + 9:])
-                    if loc_cc != -1:
-                        print('cc:          ' + line[loc_cc + 4])
+                    # loc_content_type = line.find('Content-Type: ')
+                    # loc_date    = line.find('Date: ')
+                    # loc_from    = line.find('From: ')
+                    # loc_to      = line.find('To: ')
+                    # loc_subject = line.find('Subject: ')
+                    # loc_cc      = line.find('Cc: ')
+                    # if loc_content_type != -1:
+                    #     print('content-type:' + line[loc_content_type + 14:])
+                    # if loc_date != -1:
+                    #     print(' date:       ' + line[loc_date + 6:])
+                    # if loc_from != -1:
+                    #     print(' from:       ' + line[loc_from + 6:])
+                    # if loc_to != -1:
+                    #     print(' to:         ' + line[loc_to + 4:])
+                    # if loc_subject != -1:
+                    #     print(' subject:    ' + line[loc_subject + 9:])
+                    # if loc_cc != -1:
+                    #     print('cc:          ' + line[loc_cc + 4])
+                    obj_cc              = re.match(r'(?:[Cc]c:\s*[\'\"]*([^\'\";]*)[\'\";]*)?[\s]*',     line, flags=re.I)
+                    obj_subject         = re.match(r'(?:[Ss]ubject:\s*[\'\"]*([^\'\";]*)[\'\";]*)?[\s]*',line, flags=re.I)
+                    obj_to              = re.match(r'(?:[Tt]o:\s*[\'\"]*([^\'\";]*)[\'\";]*)?[\s]*',     line, flags=re.I)
+                    obj_from            = re.match(r'(?:[Ff]rom:\s*[\'\"]*([^\'\";]*)[\'\";]*)?[\s]*',   line, flags=re.I)
+                    obj_date            = re.match(r'(?:[Dd]ate:\s*[\'\"]*([^\'\";]*)[\'\";]*)?[\s]*',   line, flags=re.I)
+                    obj_content_type    = re.match(r'(?:[Cc]ontent-type:\s*[\'\"]*([^\'\";]*)[\'\";]*)?[\s]*(?:[Ff]ormat:\s*[\'\"]*([^\'\";]*)[\'\";]*)?[\s]*', line, flags=re.M|re.I)
+                    obj_charset         = re.search(r'(?:charset:\s*[\'\"]*([^\'\";]*)[\'\";]*)?[\s]*',line, flags=re.IGNORECASE)
+                    obj_transfer_encoding = re.search(r'(?:content-transfer-encoding:\s*[\'\"]*([^\'\";]*)[\'\";]*)?[\s]*', line, flags=re.IGNORECASE)
+                    if obj_from.group(1) is not None:
+                        print('from: ' + obj_from.group(1))
+                    if obj_to.group(1) is not None:
+                        print('to: ' + obj_to.group(1))
+                    if obj_cc.group(1) is not None:
+                        print('cc: ' + obj_cc.group(1))
+                    if obj_date.group(1) is not None:
+                        print('date: ' + obj_date.group(1))
+                    if obj_content_type.group(1) is not None:
+                        print('content-type: ' + obj_content_type.group(1))
+                    if obj_charset.group(1) is not None:
+                        print('charset: ' + obj_charset.group(1))
+                    if obj_transfer_encoding.group(1) is not None:
+                        print('content-transfer-encoding: ' + obj_transfer_encoding.group(1))
+                
+                    
+                    
                 print('-------------------------------------------')
         return None
     except Exception as e:
@@ -113,5 +135,5 @@ def clearLog():
 
 if __name__ == '__main__':
     mail_link = login()
-    # mailBoxInfo(mail_link)
-    # retrMail(mail_link, 10)
+    mailBoxInfo(mail_link)
+    retrMail(mail_link)
