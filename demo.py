@@ -65,14 +65,14 @@ def retrMail(mailLink, retr_num=0):
             retr_num = mail_list[-1][0]
         if len(mail_list) == 0:
             return None
-
         # number = mail_info[0]
         # mail = mailLink.retr(number)[1]
         for i in range(1, retr_num):
-            mail_info = []
-            for info in mailLink.retr(i)[1:][0]:
-                mail_info.append(info.decode('utf-8'))
-                Basics.getInfo(mail_info)
+            mail_info = [info.decode('utf-8') for info in mailLink.retr(i)[1:][0]]
+            # for info in mailLink.retr(i)[1:][0]:
+            #     # print('##############################' + info.decode('utf-8'))
+            #     mail_info.append(info.decode('utf-8'))
+            Basics.getInfo(mail_info)
             
             # with open('log/mail_' + (str)(i) + '.log', 'a+', encoding='utf-8') as file:
             #     for info in mailLink.retr(i)[1:][0]:
@@ -107,10 +107,8 @@ def retrMail(mailLink, retr_num=0):
             #         #     print('content-transfer-encoding: ' + obj_transfer_encoding.group(1))
             #         if obj_boundary is not None:
             #             print('boundary: '                    + obj_boundary.group(1))
-                
                     
-                    
-                print('-------------------------------------------')
+            print('-------------------------------------------')
         return None
     except Exception as e:
         print(str(e))
@@ -119,10 +117,10 @@ def retrMail(mailLink, retr_num=0):
 
 def clearLog():
     for file_name in os.listdir('log/'):
-            if file_name.endswith('.log'):
-                os.remove('log/' + (str)(file_name))
+        if file_name.endswith('.log'):
+            os.remove('log/' + (str)(file_name))
 
 if __name__ == '__main__':
     mail_link = login()
     # mailBoxInfo(mail_link)
-    retrMail(mail_link, 2)
+    retrMail(mail_link)

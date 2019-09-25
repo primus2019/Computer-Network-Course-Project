@@ -1,4 +1,5 @@
 import re
+import Transfer
 
 
 def getInfo(mail_info):
@@ -14,22 +15,21 @@ def getInfo(mail_info):
         obj_charset         = re.search(r'(?:charset:\s*[\'\"]*([^\'\";]*)[\'\";]*)?[\s]*',line, flags=re.IGNORECASE)
         obj_transfer_encoding = re.search(r'(?:content-transfer-encoding:\s*[\'\"]*([^\'\";]*)[\'\";]*)?[\s]*', line, flags=re.IGNORECASE)
         obj_boundary        = re.search(r'(?:boundary=\s*[\'\"]*([^\'\";]*)[\'\";]*)', line, flags=re.IGNORECASE)
-        if obj_from.group(1) is not None:
-            basic_info['from'] = obj_from.group(1)
-        if obj_to.group(1) is not None:
-            print('to: '                        + obj_to.group(1))
-        if obj_date.group(1) is not None:
-            print('date: '                      + obj_date.group(1))
-        if obj_cc.group(1) is not None:
-            print('cc: '                        + obj_cc.group(1))
-        if obj_content_type.group(1) is not None:
-            print('content-type: '              + obj_content_type.group(1))
-        if obj_charset.group(1) is not None:
-            print('charset: '                   + obj_charset.group(1))
-        if obj_transfer_encoding.group(1) is not None:
-            print('content-transfer-encoding: ' + obj_transfer_encoding.group(1))
-        if obj_boundary is not None:
-            print('boundary: '                    + obj_boundary.group(1))
+        if obj_from.group(1)    is not None:
+            basic_info['from']     = obj_from.group(1)
+        if obj_to.group(1)      is not None:
+            basic_info['to']       = obj_to.group(1)
+        if obj_subject.group(1) is not None:
+            basic_info['subject']  = obj_subject.group(1)
+        if obj_date.group(1)    is not None:
+            basic_info['date']     = obj_date.group(1)
+        if obj_cc.group(1)      is not None:
+            basic_info['cc']       = obj_cc.group(1)
+        if obj_boundary         is not None:
+            basic_info['boundary'] = obj_boundary.group(1)
+    print([Transfer.encode(info) for info in basic_info.values()])
+    return basic_info
+
     
     
 # (?:to:\s*[\'\"]*(<to>[^\'\";]*)[\'\";]*)?(?:subject:\s*[\'\"]*(<subject>[^\'\";]*)[\'\";]*)?(?:date:\s*[\'\"]*(<date>[^\'\";]*)[\'\";]*)?(?:cc:\s*[\'\"]*(<cc>[^\'\";]*)[\'\";]*)?(?:boundary=\s*[\'\"]*(<boundary>[^\'\";]*)
