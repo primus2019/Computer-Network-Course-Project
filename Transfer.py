@@ -27,6 +27,7 @@ def encode(raw):
         else:
             print('exception!!')
             return None
+    # if gb2312
     else:
         print('exceptions!!!!')
         return None
