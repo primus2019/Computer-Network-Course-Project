@@ -31,4 +31,3 @@ def encode(raw):
     else:
         print('exceptions!!!!')
         return None
-    

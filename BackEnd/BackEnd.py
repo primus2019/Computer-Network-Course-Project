@@ -1,8 +1,10 @@
 import re
-import Transfer
+from BackEnd.ContentTransactions import Transfer
 
 
 def getInfo(mail_info):
+    '''Get basic information of given SINGLE mail
+    '''
     basic_info = {'from': '', 'to': '', 'subject': '', 'date': '', 'cc': '', 'boundary': ''}
     list = []
     for line in mail_info:
@@ -28,7 +30,7 @@ def getInfo(mail_info):
         if obj_boundary         is not None:
             basic_info['boundary'] = obj_boundary.group(1)
     print([Transfer.encode(info) for info in basic_info.values()])
-    return basic_info
+    return ([Transfer.encode(info) for info in basic_info.values()])
 
     
     

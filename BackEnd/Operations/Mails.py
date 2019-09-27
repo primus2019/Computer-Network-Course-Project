@@ -1,37 +1,24 @@
-from poplib import POP3_SSL
-import os
-import re
 from BackEnd import BackEnd
-from BackEnd.Operations import Login
-from FrontEnd.BasicFrame import Root, Application
-
-test_info = {
-    'pop_host':      'pop.163.com',
-    'smtp_host':     'smtp.163.com',
-    'port':          25,
-    'user_name':     'primus1998@163.com',
-    'password':      'jlc123456'
-}
 
 
 def retrMail(mailLink, retr_num=0):
     '''retr existing mails in the logged mailbox
-
     '''
-    clearLog()
+    # clearLog()
     try:
         # only 1# element is useful; see mail_info.log
         mail_list = [[(int)(mail_idx), (int)(mail_myth)] for mail_idx, mail_myth in (item.decode('utf-8').split(' ') for item in mailLink.list()[1])]
-        clearLog()
+        # clearLog()
         if retr_num == 0:
             retr_num = mail_list[-1][0]
         if len(mail_list) == 0:
             return None
         # number = mail_info[0]
         # mail = mailLink.retr(number)[1]
+        all_mail_info = []
         for i in range(1, retr_num):
             mail_info = [info.decode('utf-8') for info in mailLink.retr(i)[1:][0]]
-            BackEnd.getInfo(mail_info)
+            all_mail_info.append(BackEnd.getInfo(mail_info))
 
             # for info in mailLink.retr(i)[1:][0]:
             #     # print('##############################' + info.decode('utf-8'))
@@ -72,23 +59,7 @@ def retrMail(mailLink, retr_num=0):
             #             print('boundary: '                    + obj_boundary.group(1))
                     
             print('-------------------------------------------')
-        return None
+        return all_mail_info
     except Exception as e:
         print(str(e))
         return None
-
-
-def clearLog():
-    for file_name in os.listdir('log/'):
-        if file_name.endswith('.log'):
-            os.remove('log/' + (str)(file_name))
-
-
-if __name__ == '__main__':
-    root = Root("1400x700+0+0", 'mailbox demo')
-    root.setMax()
-    app = Application(master=root)
-    app.mainloop()
-    # mail_link = Login.login(test_info)
-    # # mailBoxInfo(mail_link)
-    # retrMail(mail_link, 5)
