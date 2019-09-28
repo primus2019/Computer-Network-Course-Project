@@ -8,4 +8,4 @@ class MailListBox(tk.Listbox):
     
     def retrieveMail(self, all_mail_info):
         for info in all_mail_info:
-            self.insert('end', (str)(info))
+            self.insert('end', (str)(info).encode('utf-8'))
