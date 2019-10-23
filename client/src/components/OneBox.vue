@@ -1,35 +1,36 @@
+<!-- eslint-disable -->
+<!-- eslint comma-dangle: ["error", "never"] -->
+<!-- eslint-disable-next-line vue/max-attributes-per-line -->
+<!-- eslint-disable max-len -->
+<!-- eslint-disable arrow-parens -->
 <template>
-  <div class="container">
-    <h1>
-      {{ message }}
-    </h1>
-    <button type="button"
-            class="btn btn-primary"
-            v-b-modal.login-modal>
-            login
-    </button>
-    <table class="table table-hover">
+  <div class='container'>
+    <h1>{{ message }}</h1>
+    <button type='button' class='btn btn-primary' v-b-modal.login-modal>login</button>
+    <!-- <table class='table table-hover'>
       <thead>
         <tr>
-          <th scope="col">subject</th>
-          <th scope="col">sender</th>
-          <th scope="col">date</th>
+          <th scope='col'>Subject</th>
+          <th scope='col'>From</th>
+          <th scope='col'>Date</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(mail, index) in mails" :key="index">
-          <td>{{ mail.subject }}</td>
-          <td>{{ mail.sender }}</td>
-          <td>{{ mail.date }}</td>
+        <tr v-for='(mail, index) in mails' :key='index'>
+          <checkmail v-b-modal.check-mail-modal :mail='mail'>{{ mail.Subject }}</checkmail>
+          <td v-b-modal.check-mail-modal>{{ mail.From }}</td>
+          <td v-b-modal.check-mail-modal>{{ mail.Date }}</td>
         </tr>
       </tbody>
-    </table>
-    <table class="table table-hover">
+      <checkmailrow :mails=mails></checkmailrow>
+    </table> -->
+    <checkmailtable :mails=mails></checkmailtable>
+    <table class='table table-hover'>
       <thead>
         <tr>
-          <th scope="col">account</th>
-          <th scope="col">password</th>
+          <th scope='col'>account</th>
+          <th scope='col'>password</th>
         </tr>
       </thead>
       <tbody>
@@ -39,61 +40,60 @@
         </tr>
       </tbody>
     </table>
-    <b-modal ref="accountLogin"
-                id="login-modal"
-                title="Login"
-                hide-footer>
-        <b-form @submit="onLogin" @reset="onReset" class="w-100">
-            <b-form-group id="form-account-group"
-                            label="账号:"
-                            label-for="form-account-input">
-                <b-form-input id="form-account-input"
-                                type="text"
-                                v-model="newAccount.account"
-                                required
-                                placeholder="Enter account">
-                </b-form-input>
-            </b-form-group>
-            <b-form-group id="form-password-group"
-                            label="密码:"
-                            label-for="form-password-input">
-                <b-form-input id="form-password-input"
-                                type="password"
-                                v-model="newAccount.password"
-                                required
-                                placeholder="Enter password">
-                </b-form-input>
-            </b-form-group>
-            <b-button-group>
-                <b-button type="submit" variant="primary">Submit</b-button>
-                <b-button type="reset" variant="danger">Reset</b-button>
-            </b-button-group>
-        </b-form>
+    <b-modal ref='accountLogin' id='login-modal' title='Login' hide-footer>
+      <b-form @submit='onLogin' @reset='onReset' class='w-100'>
+        <b-form-group id='form-account-group' label='账号:' label-for='form-account-input'>
+          <b-form-input
+            id='form-account-input'
+            type='text'
+            v-model='newAccount.account'
+            required
+            placeholder='Enter account'
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group id='form-password-group' label='密码:' label-for='form-password-input'>
+          <b-form-input
+            id='form-password-input'
+            type='password'
+            v-model='newAccount.password'
+            required
+            placeholder='Enter password'
+          ></b-form-input>
+        </b-form-group>
+        <b-button-group>
+          <b-button type='submit' variant='primary'>Submit</b-button>
+          <b-button type='reset' variant='danger'>Reset</b-button>
+        </b-button-group>
+      </b-form>
     </b-modal>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-/* eslint linebreak-style: ["error", "windows"] */
+// import checkmail from './CheckMail.vue';
+// import checkmailrow from './CheckMailRow.vue';
+import checkmailtable from './CheckMailTable.vue';
+
+/* eslint linebreak-style: ['error', 'windows'] */
 export default {
   data() {
     return {
       message: 'no message',
       newAccount: {
         account: '',
-        password: '',
+        password: ''
       },
       mails: [
-        // {
-        //   account_id: '12345',
-        //   subject: 'hello world',
-        //   sender: 'world',
-        //   eceiver: 'me',
-        //   date: 'today',
-        //   content: 'hello world',
-        //   read: true,
-        // },
+        {
+          account_id: '12345',
+          Subject: 'hello world',
+          From: 'world',
+          To: 'me',
+          Date: 'today',
+          contents: 'hello world',
+          read: true
+        }
       ],
       addMail: {
         subject: '',
@@ -101,7 +101,7 @@ export default {
         receiver: '',
         date: '',
         content: '',
-        read: true,
+        read: true
       },
       editMail: {
         id: '',
@@ -109,15 +109,19 @@ export default {
         receiver: '',
         date: '',
         content: '',
-        read: true,
-      },
+        read: true
+      }
     };
+  },
+  components: {
+    checkmailtable
   },
   methods: {
     // 3 get mails by account ID
     getMails(accountID) {
       const path = `http://localhost:5000/OneBox/${accountID}`;
-      axios.get(path)
+      axios
+        .get(path)
         .then((res) => {
           this.mails = res.data.mails;
           this.message = res.data.status;
@@ -125,7 +129,7 @@ export default {
         })
         .catch((error) => {
           // eslint-disable-next-line
-          console.error(error)
+          console.error(error);
         });
     },
     initAccount() {
@@ -138,7 +142,7 @@ export default {
       this.$refs.accountLogin.hide();
       const payload = {
         account: this.newAccount.account,
-        password: this.newAccount.password,
+        password: this.newAccount.password
       };
       this.addAccount(payload);
       // this.initAccount();
@@ -151,7 +155,8 @@ export default {
     // 2 add account to server, get and send accountID to getMails
     addAccount(payload) {
       const path = 'http://localhost:5000/OneBox/accounts';
-      axios.post(path, payload)
+      axios
+        .post(path, payload)
         .then((res) => {
           this.getMails(res.data.account_id);
           this.message = 'Account added!';
@@ -159,16 +164,16 @@ export default {
         })
         .catch((error) => {
           // eslint-disable-next-line
-          console.log(error)
+          console.log(error);
           // this.getMails(payloadk)
         });
     },
     getPreset() {
       this.getMails('12345');
-    },
+    }
   },
   created() {
     this.getPreset();
-  },
+  }
 };
 </script>

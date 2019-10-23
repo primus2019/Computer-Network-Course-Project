@@ -1,8 +1,11 @@
 import uuid
+import email
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-
+from utils import Login
+from utils import Mails
+from utils import Transfer
 
 BOOKS = [
     {
@@ -29,10 +32,10 @@ MAILS = [
     {
         'id': uuid.uuid4().hex,
         'account_id': '12345',
-        'subject': 'hello world',
-        'sender': 'world',
-        'receiver': 'me',
-        'date': 'today',
+        'Subject': 'hello world',
+        'From': 'world',
+        'To': 'me',
+        'Date': 'today',
         'content': 'hello world',
         'read': True
     }
@@ -117,9 +120,17 @@ def single_book(book_id):
 
 @app.route('/OneBox/accounts', methods=['POST', 'GET'])
 def add_account():
+    # print('add_account')
     response_object = {'status': 'add account success'}
     if request.method == 'POST':
         post_data = request.get_json()
+        for account in ACCOUNTS:
+            if account['account'] == post_data.get('account'):
+                # print('account already exists')
+                account['password'] = post_data.get('password')
+                response_object['account_id'] = account['id']
+                response_object['message'] = 'account added!'
+                return jsonify(response_object)
         ACCOUNTS.append({
             'id': uuid.uuid4().hex,
             'account': post_data.get('account'),
@@ -139,10 +150,35 @@ def add_account():
 
 @app.route('/OneBox/<account_id>', methods=['GET'])
 def get_mails(account_id):
+    # print('get_mails: {}'.format(account_id))
     response_object = {'status': 'get mail success'}
+    account = {}
     mails = []
+    for single_account in ACCOUNTS:
+        if single_account['id'] == account_id:
+            account = single_account
+            break
+    #### if there are mails of the account, clear them
+    #### this step appears only removes mails on the odd position
+    # for mail in MAILS:
+    #     print(mail['Subject'])
+    #     print(mail['account_id'])
+    for mail in MAILS:
+        if (str)(mail['account_id']) == (str)(account_id):
+            # print('remove duplicated mail {}'.format(mail['Subject']))
+            MAILS.remove(mail)
+    #### get mails of the account
+    mail_link = Login.login(account, True)
+    raw_mails = Mails.retrMail(mail_link, 10)
+    account_mails = Mails.contentSeparator(raw_mails)
+    for account_mail in account_mails:
+        account_mail['id'] = uuid.uuid4().hex
+        account_mail['account_id'] = account_id
+        MAILS.append(account_mail)
+    #### return mails
     for mail in MAILS:
         if mail['account_id'] == account_id:
+            print('find mail! {}'.format(mail['Subject']))
             mails.append(mail)
     response_object['mails'] = mails
     return jsonify(response_object)
@@ -152,11 +188,11 @@ def add_test_mails(account_id):
     MAILS.append({
         'id': uuid.uuid4().hex,
         'account_id': account_id,
-        'subject': 'wobuzuorenla!!!',
-        'sender': '咋瓦鲁多',
-        'receiver': '泷泽萝拉哒',
-        'date': 'today',
-        'content': 'hello world',
+        'Subject': 'wobuzuorenla!!!',
+        'From': '咋瓦鲁多',
+        'To': '泷泽萝拉哒',
+        'Date': 'today',
+        'contents': 'hello world',
         'read': True
     })
 
