@@ -1,7 +1,8 @@
 import re
 import email
-from email.parser import HeaderParser
+import base64
 
+from email.parser import HeaderParser
 from utils import Transfer
 
 
@@ -133,6 +134,7 @@ def contentSeparator(raw_mails):
     like [[{json of a content}, {json of a content}, ...], [another mail], ...]
     '''
     separated_mails = []
+    assert raw_mails is not None, 'received nothing from mail box'
     for i, raw_mail in enumerate(raw_mails): # raw_mail must be string
         separated_mail = {'contents': []}
         raw_mail = '\n'.join(raw_mail)
@@ -147,9 +149,14 @@ def contentSeparator(raw_mails):
             # print('is multipart!')
             for payload in e.walk():
                 # print(payload.get_content_type())
+                # tmp = ''
+                # if payload.get_payload(decode=True) is not None:
+                #     tmp = payload.get_payload(decode=True).decode('utf-8')
                 separated_mail['contents'].append({
                             'content_type': payload.get_content_type(),
-                            'content':      (str)(payload.get_payload(decode=True)),
+                            'content':      payload.get_payload(decode=True),
+                            # 'content':      tmp,
+                            'content_charset': payload.get_content_charset(),
                             'is_multipart': True
                         
                 })
@@ -158,21 +165,61 @@ def contentSeparator(raw_mails):
             separated_mail['contents'].append({
                 'content_type': e.get_content_type(),
                 'content':      (str)(e.get_payload(decode=True)),
+                'content_charset': e.get_content_charset(),
                 'is_multipart': False
             })
+        print('dealing with mail {}'.format(i))
+        __write_mail_contents(separated_mail, i)
+        separated_mail = deal_with_nonetype(separated_mail)
+        separated_mail = deal_with_content(separated_mail)
+        separated_mail = deal_with_nonetype(separated_mail)
+        separated_mail = deal_with_newline(separated_mail)
         separated_mails.append(separated_mail)
-
     return separated_mails
 
-    # mail_link = Login.login(login_info)
-    # raw_mails = Mails.retrMail(mail_link, 50)
-    # # print(email.parser.Parser(policy=default).parsestr(text=''.join(raw_mails[0])))
-    # for i, raw_mail in enumerate(raw_mails):
-    #     e = email.message_from_string('\n'.join(raw_mail))
-    #     if e.is_multipart():
-    #         # print('is multipart!')
-    #         for j, payload in enumerate(e.walk()):
-    #             print((str)(i) + '.' + (str)(j) + ' ' + (str)(payload.get_content_type()))
-    #     else:
-    #         # print('is not multipart!!!!!!!!!!!!!!!!!!!!!!!!')
-    #         print((str)(i) + '.' + (str)(0) + ' ' + (str)(e.get_content_type()))
+
+def deal_with_nonetype(separated_mail):
+    tmp = []
+    for mail_content in separated_mail['contents']:
+        if mail_content['content'] is not None and mail_content['content'] != 'None':
+            tmp.append(mail_content)
+    separated_mail['contents'] = tmp
+    return separated_mail
+
+
+def deal_with_newline(separated_mail):
+    for mail_content in separated_mail['contents']:
+        if mail_content['content_type'] == 'text/plain':
+            mail_content['content'] = mail_content['content'].replace(r'\n', '</br>')
+        elif mail_content['content_type'] == 'text/html':
+            mail_content['content'] = mail_content['content'].replace(r'\n', '')
+        else:
+            mail_content['content'] = mail_content['content'].replace(r'\n', '</br>')
+    return separated_mail
+
+
+def deal_with_content(separated_mail):
+    for mail_content in separated_mail['contents']:
+        if type(mail_content['content']) == str:
+            continue
+        if mail_content['content_charset'] == 'utf-8':
+            mail_content['content'] = str(mail_content['content'], 'utf-8', 'ignore')# .decode('utf-8')
+        elif mail_content['content_charset'] == 'gbk':
+            mail_content['content'] = str(mail_content['content'], 'gbk', 'ignore')# .decode('gbk')
+        elif mail_content['content_charset'] == 'gb18030':
+            mail_content['content'] = str(mail_content['content'], 'gb18030', 'ignore')# .decode('gbk')
+        else:
+            print('new content_charset: {}'.format(mail_content['content_charset']))
+            mail_content['content'] = str(mail_content['content'], mail_content['content_charset'], 'ignore')# .decode('gbk')
+    return separated_mail
+
+
+
+def __write_mail_contents(separated_mail, i):
+    with open('log/{}.log'.format(i), 'w+') as file:
+        for content in separated_mail['contents']:
+            file.write('content_type: {}\n'.format(content['content_type']))
+            file.write('content: {}\n'.format(content['content']))
+            file.write('content_charset: {}\n'.format(content['content_charset']))
+            file.write('++++++++++++++++++++++++++++++++++++++++++++++++\n')
+

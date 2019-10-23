@@ -19,9 +19,9 @@
         </table>
         <b-modal ref='mailCheck' id='check-mail-modal' :title=clicked_mail.Subject hide-footer>
             <b-button-group>
-                <b-button v-b-toggle.collapse-Date variant="date">Date</b-button>
-                <b-button v-b-toggle.collapse-From variant="from">From</b-button>
-                <b-button v-b-toggle.collapse-To variant="to">To</b-button>
+                <b-button v-b-toggle.collapse-Date variant="success">Date</b-button>
+                <b-button v-b-toggle.collapse-From variant="info">From</b-button>
+                <b-button v-b-toggle.collapse-To variant="warning">To</b-button>
             </b-button-group>
             <b-collapse id="collapse-Date" visible accordion="accordion-1">
                 <b-card>{{ clicked_mail.Date }}</b-card>
@@ -39,7 +39,8 @@
                             <span v-html=content.content></span>
                         </span>
                         <span v-else-if="content.content_type === 'text/plain'">
-                            {{  content.content  }}
+                            <span v-html=content.content></span>
+                            <!-- {{  content.content  }} -->
                         </span>
                         <h1 v-else>this is {{  content.content_type  }}!</h1>
                     </div>

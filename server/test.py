@@ -65,7 +65,7 @@ def __test():
         separated_mails.append(separated_mail)
             # print('is not multipart!!!!!!!!!!!!!!!!!!!!!!!!')
             # print((str)
-    write_list('separated_mails', separated_mails, False)
+    # write_list('separated_mails', separated_mails, False)
 
 
 
