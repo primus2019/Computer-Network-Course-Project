@@ -17,7 +17,7 @@
                 </tr>
             </tbody>
         </table>
-        <b-modal ref='mailCheck' id='check-mail-modal' :title=clicked_mail.Subject hide-footer>
+        <b-modal size='xl' ref='mailCheck' id='check-mail-modal' :title=clicked_mail.Subject hide-footer>
             <b-button-group>
                 <b-button v-b-toggle.collapse-Date variant="success">Date</b-button>
                 <b-button v-b-toggle.collapse-From variant="info">From</b-button>
@@ -32,6 +32,13 @@
             <b-collapse id="collapse-To" visible accordion="accordion-1">
                 <b-card>{{ clicked_mail.To }}</b-card>
             </b-collapse>
+            <!-- <b-dropdown id="dropdown-1" text="Dropdown Button" class="m-md-2">
+                <div v-for='(content, index) in clicked_mail.contents' :key="index">
+                    <b-dropdown-item href=index>{{  content.content_type  }}</b-dropdown-item>
+                    <b-dropdown-divider></b-dropdown-divider>
+                </div>
+            </b-dropdown> -->
+            <!-- further perfection: one collapse for one media and link the collapse with the dropdown to show one content at a time -->
             <b-media>
                 <template>
                     <div v-for='(content, index) in clicked_mail.contents' :key="index">
