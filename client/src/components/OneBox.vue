@@ -5,8 +5,28 @@
 <!-- eslint-disable arrow-parens -->
 <template>
   <div class='container'>
-    <h1>{{ message }}</h1>
-    <button type='button' class='btn btn-primary' v-b-modal.login-modal>login</button>
+    <b-navbar toggleable="lg" type="dark" variant="dark">
+      <b-navbar-nav left>
+        <h1>
+          <b-badge variant="dark">
+            One
+          </b-badge>
+          <b-badge variant="warning">
+            Box
+          </b-badge>
+          <b-badge variant="light">
+            Demo
+          </b-badge>
+        </h1>
+      </b-navbar-nav>
+      <b-nav-item right>
+        <button right type='button' class='btn btn-primary' v-b-modal.login-modal>login</button><br><br>
+      </b-nav-item>
+    </b-navbar>
+    <!-- <h2>{{ message }}</h2> -->
+    <br>
+    <br>
+    <pagebar :mails=mails v-model="clicked_page_index"></pagebar><br>
     <!-- <table class='table table-hover'>
       <thead>
         <tr>
@@ -25,7 +45,7 @@
       </tbody>
       <checkmailrow :mails=mails></checkmailrow>
     </table> -->
-    <checkmailtable :mails=mails></checkmailtable>
+    <checkmailtable :mails=mails :page_index=clicked_page_index></checkmailtable>
     <table class='table table-hover'>
       <thead>
         <tr>
@@ -66,6 +86,12 @@
         </b-button-group>
       </b-form>
     </b-modal>
+    <b-modal ref="loading">
+        <b-button variant="primary" disabled>
+            <b-spinner small type="grow"></b-spinner>
+            Loading...
+        </b-button>
+    </b-modal>
   </div>
 </template>
 
@@ -74,12 +100,14 @@ import axios from 'axios';
 // import checkmail from './CheckMail.vue';
 // import checkmailrow from './CheckMailRow.vue';
 import checkmailtable from './CheckMailTable.vue';
+import pagebar from './PageBar.vue';
 
 /* eslint linebreak-style: ['error', 'windows'] */
 export default {
   data() {
     return {
       message: 'no message',
+      clicked_page_index: 0,
       newAccount: {
         account: '',
         password: ''
@@ -119,17 +147,20 @@ export default {
     };
   },
   components: {
-    checkmailtable
+    checkmailtable,
+    pagebar
   },
   methods: {
     // 3 get mails by account ID
     getMails(accountID) {
+      this.start_loading();
       const path = `http://localhost:5000/OneBox/${accountID}`;
       axios
         .get(path)
         .then((res) => {
           this.mails = res.data.mails;
           this.message = res.data.status;
+          this.stop_loading();
           // for test
         })
         .catch((error) => {
@@ -143,6 +174,7 @@ export default {
     },
     // 1
     onLogin(evt) {
+      this.start_loading();
       evt.preventDefault();
       this.$refs.accountLogin.hide();
       const payload = {
@@ -151,14 +183,18 @@ export default {
       };
       this.addAccount(payload);
       // this.initAccount();
+      this.stop_loading();
     },
     onReset(evt) {
+      this.start_loading();
       evt.preventDefault();
       this.$refs.accountLogin.hide();
       this.initAccount();
+      this.stop_loading();
     },
     // 2 add account to server, get and send accountID to getMails
     addAccount(payload) {
+      this.start_loading();
       const path = 'http://localhost:5000/OneBox/accounts';
       axios
         .post(path, payload)
@@ -172,9 +208,16 @@ export default {
           console.log(error);
           // this.getMails(payloadk)
         });
+        this.stop_loading();
     },
     getPreset() {
       this.getMails('12345');
+    },
+    start_loading() {
+      this.$refs.loading.show();
+    },
+    stop_loading() {
+      this.$refs.loading.hide();
     }
   },
   created() {

@@ -4,24 +4,22 @@ import base64
 
 from email.parser import HeaderParser
 from utils import Transfer
+from utils import Login
 
 
-def retrMail(mailLink, retr_num=0):
+def retrMail(mailLink, end_retr_num=0, start_retr_num=1):
     '''retr existing mails in the logged mailbox
     '''
-    # clearLog()
     try:
         # only 1# element is useful; see mail_info.log
         mail_list = [[(int)(mail_idx), (int)(mail_myth)] for mail_idx, mail_myth in (item.decode('utf-8').split(' ') for item in mailLink.list()[1])]
-        # clearLog()
-        if retr_num == 0:
-            retr_num = mail_list[-1][0]
+        if end_retr_num == 0:
+            end_retr_num = mail_list[-1][0]
         if len(mail_list) == 0:
+            Login.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nlen(mail_list)==0')
             return None
-        # number = mail_info[0]
-        # mail = mailLink.retr(number)[1]
         raw_mail_info = []
-        for i in range(1, retr_num):
+        for i in range(start_retr_num, end_retr_num):
             mail_info = [info.decode('utf-8') for info in mailLink.retr(i)[1:][0]]
             raw_mail_info.append(mail_info)
             
@@ -63,10 +61,9 @@ def retrMail(mailLink, retr_num=0):
             #         if obj_boundary is not None:
             #             print('boundary: '                    + obj_boundary.group(1))
                     
-            print('-------------------------------------------')
         return raw_mail_info
     except Exception as e:
-        print(str(e))
+        Login.log(str(e))
         return None
 
 
@@ -146,21 +143,14 @@ def contentSeparator(raw_mails):
         
         e = email.message_from_string(raw_mail)
         if e.is_multipart():
-            # print('is multipart!')
             for payload in e.walk():
-                # print(payload.get_content_type())
-                # tmp = ''
-                # if payload.get_payload(decode=True) is not None:
-                #     tmp = payload.get_payload(decode=True).decode('utf-8')
                 separated_mail['contents'].append({
                             'content_type': payload.get_content_type(),
                             'content':      payload.get_payload(decode=True),
-                            # 'content':      tmp,
                             'content_charset': payload.get_content_charset(),
                             'is_multipart': True
                         
                 })
-                # print(separated_mail[1:])
         else:
             separated_mail['contents'].append({
                 'content_type': e.get_content_type(),
@@ -168,7 +158,7 @@ def contentSeparator(raw_mails):
                 'content_charset': e.get_content_charset(),
                 'is_multipart': False
             })
-        print('dealing with mail {}'.format(i))
+        Login.log('contentSeparator: dealing with mail {}'.format(i))
         __write_mail_contents(separated_mail, i)
         separated_mail = deal_with_nonetype(separated_mail)
         separated_mail = deal_with_content(separated_mail)
@@ -209,7 +199,7 @@ def deal_with_content(separated_mail):
         elif mail_content['content_charset'] == 'gb18030':
             mail_content['content'] = str(mail_content['content'], 'gb18030', 'ignore')# .decode('gbk')
         else:
-            print('new content_charset: {}'.format(mail_content['content_charset']))
+            Login.log('new content_charset: {}'.format(mail_content['content_charset']))
             mail_content['content'] = str(mail_content['content'], mail_content['content_charset'], 'ignore')# .decode('gbk')
     return separated_mail
 

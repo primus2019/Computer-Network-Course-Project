@@ -10,14 +10,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for='(mail, index) in mails' :key='index'>
-                    <td v-b-modal.check-mail-modal @click="changeindex(index); changemail();">{{ mail.Subject }}</td>
-                    <td v-b-modal.check-mail-modal @click="changeindex(index); changemail();">{{ mail.From }}</td>
-                    <td v-b-modal.check-mail-modal @click="changeindex(index); changemail();">{{ mail.Date }}</td>
+                <tr v-for='(mail, index) in mails.slice(page_index*10, page_index*10+9)' :key='index'>
+                    <td v-b-modal.check-mail-modal @click="changeindex( cvfn+page_index*10); changemail();">{{ mail.Subject }}</td>
+                    <td v-b-modal.check-mail-modal @click="changeindex(index+page_index*10); changemail();">{{ mail.From }}</td>
+                    <td v-b-modal.check-mail-modal @click="changeindex(index+page_index*10); changemail();">{{ mail.Date }}</td>
                 </tr>
             </tbody>
         </table>
-        <b-modal size='xl' ref='mailCheck' id='check-mail-modal' :title=clicked_mail.Subject hide-footer>
+        <b-modal scrollable size='xl' ref='mailCheck' id='check-mail-modal' :title=clicked_mail.Subject hide-footer>
             <b-button-group>
                 <b-button v-b-toggle.collapse-Date variant="success">Date</b-button>
                 <b-button v-b-toggle.collapse-From variant="info">From</b-button>
@@ -43,10 +43,10 @@
                 <template>
                     <div v-for='(content, index) in clicked_mail.contents' :key="index">
                         <span v-if="content.content_type === 'text/html'">
-                            <span v-html=content.content></span>
+                            <span v-html=content.content align-self='center'></span>
                         </span>
                         <span v-else-if="content.content_type === 'text/plain'">
-                            <span v-html=content.content></span>
+                            <span v-html=content.content align-self='center'></span>
                             <!-- {{  content.content  }} -->
                         </span>
                         <h1 v-else>this is {{  content.content_type  }}!</h1>
@@ -88,7 +88,7 @@
 <script>
 export default {
     name: 'checkmailtable',
-    props: ['mails'],
+    props: ['mails', 'page_index'],
     data() {
         return {
             clicked_index: 1,

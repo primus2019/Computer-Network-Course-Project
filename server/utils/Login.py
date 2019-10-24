@@ -53,3 +53,10 @@ def ask():
     login_info['port'] = (int)(login_info['port'])
 
     return login_info
+
+def log(text):
+    with open('log/web.log', 'a+', encoding='utf-8') as file:
+        file.write(text + '\n')
+
+def clearLog():
+    open('log/web.log', 'w+', encoding='utf-8').close()
