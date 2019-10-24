@@ -125,6 +125,14 @@
             required
             placeholder='Enter text content'
           ></b-form-input> -->
+        </b-form-group>    
+        <b-form-group id='form-application-group' label='File:' label-for='form-application-input'>
+          <b-form-file
+            id="form-application-input"
+            v-model="newMail.Application"
+            placeholder="Choose a file or drop it here..."
+            drop-placeholder="Drop file here..."
+          ></b-form-file>
         </b-form-group>
         <!-- <template v-slot:modal-footer> -->
             <b-button type='submit' variant='primary'>Send</b-button>
@@ -163,7 +171,7 @@ export default {
         To: '',
         Subject: '',
         Text: '',
-        Application: []
+        Application: null
       },
       account_id: '',
       mails: [
@@ -230,7 +238,7 @@ export default {
         To: '',
         Subject: '',
         Text: '',
-        Application: ''
+        Application: null
       };
     },
     // 1
@@ -258,6 +266,9 @@ export default {
       this.start_loading();
       evt.preventDefault();
       this.$refs.sendMailModal.hide();
+      // const reader = new FileReader();
+      // reader.readAsArrayBuffer(this.newMail.Application.readAsArrayBuffer());
+      this.newMail.Application = this.newMail.Application.name;
       const payload = this.newMail;
       this.sendMail(payload);
       this.stop_loading();
@@ -281,13 +292,13 @@ export default {
           this.getMails(res.data.account_id);
           this.message = 'Account added!';
           // this.showMessage = true
+          this.stop_loading();
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.log(error);
           // this.getMails(payloadk)
         });
-      this.stop_loading();
     },
     sendMail(payload) {
       this.start_loading();
@@ -296,12 +307,12 @@ export default {
         .post(path, payload)
         .then(() => {
           this.messsage = 'Mail sent!';
+          this.stop_loading();
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.log(error);
         });
-      this.stop_loading();
     },
     getPreset() {
       this.getMails('12345');

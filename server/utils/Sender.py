@@ -55,6 +55,9 @@ def send_mail(vertification, mail):
             ]
     })
 
+    # for test
+    Login.log('mail: {}'.format((str)(mail)))
+
     multipart = MIMEMultipart()
     multipart['Subject'] = mail['Subject']
     multipart['From'] = vertification['account']
@@ -65,6 +68,7 @@ def send_mail(vertification, mail):
             attachment = MIMEApplication(open(content['content'], 'rb').read(), Name=basename(content['content']))
             attachment['Content-Disposition'] = 'attachment; filename={}'.format(basename(content['content']))
             multipart.attach(attachment)
+            # multipart.attach(MIMEApplication(content['content']))
         else:
             Login.log('error in content_type: {}'.format(content['content_type']))
     try:
