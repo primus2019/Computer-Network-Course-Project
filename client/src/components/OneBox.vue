@@ -6,22 +6,25 @@
 <template>
   <div class='container'>
     <b-navbar toggleable="lg" type="dark" variant="dark">
-      <b-navbar-nav left>
+      <b-navbar-brand>
         <h1>
-          <b-badge variant="dark">
-            One
-          </b-badge>
-          <b-badge variant="warning">
-            Box
-          </b-badge>
-          <b-badge variant="light">
-            Demo
-          </b-badge>
+          <b-badge variant="dark">One</b-badge>
+          <b-badge variant="warning">Box</b-badge>
         </h1>
-      </b-navbar-nav>
-      <b-nav-item right>
-        <button right type='button' class='btn btn-primary' v-b-modal.login-modal>login</button><br><br>
-      </b-nav-item>
+      </b-navbar-brand>
+      <!-- <b-navbar-nav> -->
+        <h4>
+          <b-badge variant="light">Demo</b-badge>
+        </h4>
+      <!-- </b-navbar-nav> -->
+
+      <b-navbar-toggle target="right-navbar"></b-navbar-toggle>
+
+      <b-collapse id="right-navbar" is-nav>
+        <b-navbar-nav class="ml-auto">
+            <b-button variant="secondary" class='btn btn-primary' v-b-modal.login-modal>login</b-button>
+        </b-navbar-nav>
+      </b-collapse>
     </b-navbar>
     <!-- <h2>{{ message }}</h2> -->
     <br>
@@ -86,7 +89,7 @@
         </b-button-group>
       </b-form>
     </b-modal>
-    <b-modal ref="loading">
+    <b-modal ref="loading" hide-footer hide-header size='sm' body-bg-variant='primary' body-text-variant='light' centered>
         <b-button variant="primary" disabled>
             <b-spinner small type="grow"></b-spinner>
             Loading...

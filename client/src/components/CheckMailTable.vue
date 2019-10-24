@@ -17,12 +17,21 @@
                 </tr>
             </tbody>
         </table>
-        <b-modal scrollable size='xl' ref='mailCheck' id='check-mail-modal' :title=clicked_mail.Subject hide-footer>
-            <b-button-group>
-                <b-button v-b-toggle.collapse-Date variant="success">Date</b-button>
-                <b-button v-b-toggle.collapse-From variant="info">From</b-button>
-                <b-button v-b-toggle.collapse-To variant="warning">To</b-button>
-            </b-button-group>
+        <b-modal
+        scrollable
+        size='xl'
+        ref='mailCheck'
+        id='check-mail-modal'
+        :title=clicked_mail.Subject
+        header-bg-variant='secondary'
+        header-text-variant='light'
+        footer-bg-variant='dark'
+        >
+            <b-nav tabs card-header>
+                <b-nav-item v-b-toggle.collapse-Date variant="success">Date</b-nav-item>
+                <b-nav-item v-b-toggle.collapse-From variant="info">From</b-nav-item>
+                <b-nav-item v-b-toggle.collapse-To variant="warning"> To </b-nav-item>
+            </b-nav>
             <b-collapse id="collapse-Date" visible accordion="accordion-1">
                 <b-card>{{ clicked_mail.Date }}</b-card>
             </b-collapse>
@@ -81,6 +90,9 @@
                 </p>
                 </b-media>
             </b-media> -->
+            <template v-slot:modal-footer>
+                <b-button block variant="dark" size='xl'>Reply</b-button>
+            </template>
         </b-modal>
     </div>
 </template>
