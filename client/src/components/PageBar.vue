@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!-- <b-pagination-nav no-page-detect :number-of-pages="mails.length / 10 + 1" :limit=10 @click="changePageIndex(index)"></b-pagination-nav> -->
         <b-button-toolbar key-nav aria-label="Toolbar with button groups">
             <b-button-group class="mx-1">
                 <b-button variant="success">&laquo;</b-button>
@@ -33,6 +34,8 @@ export default {
         changePageIndex(index) {
             this.clicked_page_index = index / 10;
             this.$emit('input', this.clicked_page_index);
+            // this.clicked_page_index = index;
+            // this.$emit('input', this.clicked_page_index);
         }
     }
 };

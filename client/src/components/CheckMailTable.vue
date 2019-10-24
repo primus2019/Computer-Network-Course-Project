@@ -11,7 +11,7 @@
             </thead>
             <tbody>
                 <tr v-for='(mail, index) in mails.slice(page_index*10, page_index*10+9)' :key='index'>
-                    <td v-b-modal.check-mail-modal @click="changeindex( cvfn+page_index*10); changemail();">{{ mail.Subject }}</td>
+                    <td v-b-modal.check-mail-modal @click="changeindex(index+page_index*10); changemail();">{{ mail.Subject }}</td>
                     <td v-b-modal.check-mail-modal @click="changeindex(index+page_index*10); changemail();">{{ mail.From }}</td>
                     <td v-b-modal.check-mail-modal @click="changeindex(index+page_index*10); changemail();">{{ mail.Date }}</td>
                 </tr>

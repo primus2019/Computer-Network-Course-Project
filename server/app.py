@@ -149,62 +149,64 @@ def add_account():
     return jsonify(response_object)
 
 
-@app.route('/OneBox/<account_id>', methods=['POST'])
+@app.route('/OneBox/<account_id>', methods=['POST', 'GET'])
 def send_mail(account_id):
-    response_object = {'status': 'send mail success'}
-    Login.log('sending mail...')
-    vertification = {}
-    # find vertification of the account
-    for account in ACCOUNTS:
-        if account['id'] == account_id:
-            vertification = account
-            Login.log('find account: {}'.format((str)(vertification)))
-            break
-    # the posted data is in form of jsonified mail as sent to client, so do the reverse
-    post_data = request.get_json()
-    Sender.send_mail(vertification, post_data)
-    Login.log('Mail sent!')
-    response_object.update({'message': 'Mail sent!'})
-    return jsonify(response_object)
+    if request.method == 'POST':
+        response_object = {'status': 'send mail success'}
+        Login.log('sending mail...')
+        vertification = {}
+        # find vertification of the account
+        for account in ACCOUNTS:
+            if account['id'] == account_id:
+                vertification = account
+                Login.log('find account: {}'.format((str)(vertification)))
+                break
+        # the posted data is in form of jsonified mail as sent to client, so do the reverse
+        post_data = request.get_json()
+        Sender.send_mail(vertification, post_data)
+        Login.log('Mail sent!')
+        response_object.update({'message': 'Mail sent!'})
+        return jsonify(response_object)
+    else: # GET
+        Login.clearLog()
+        # print('get_mails: {}'.format(account_id))
+        response_object = {'status': 'get mail success'}
+        account = {}
+        mails = []
+        for single_account in ACCOUNTS:
+            if single_account['id'] == account_id:
+                account = single_account
+                break
+        #### if there are mails of the account, clear them
+        #### this step appears only removes mails on the odd position
+        #### temporarily, the function cannot work properly, thus I choose to reset the MAILS every time client logins
+        # for mail in MAILS:
+        #     print(mail['Subject'])
+        #     print(mail['account_id'])
+        # for mail in MAILS:
+        #     if (str)(mail['account_id']) == (str)(account_id):
+        #         # print('remove duplicated mail {}'.format(mail['Subject']))
+        #         MAILS.remove(mail)
+        MAILS.clear()
+        #### get mails of the account
+        mail_link = Login.login(account, True)
+        raw_mails = Mails.retrMail(mail_link, end_retr_num=60, start_retr_num=1)
+        account_mails = Mails.contentSeparator(raw_mails)
+        for account_mail in account_mails:
+            account_mail['id'] = uuid.uuid4().hex
+            account_mail['account_id'] = account_id
+            MAILS.append(account_mail)
+        #### return mails
+        for mail in MAILS:
+            if mail['account_id'] == account_id:
+                Login.log('find mail! {}'.format(mail['Subject']))
+                mails.append(mail)
+        response_object['mails'] = mails
+        return jsonify(response_object)
 
 
-@app.route('/OneBox/<account_id>', methods=['GET'])
-def get_mails(account_id):
-    Login.clearLog()
-    # print('get_mails: {}'.format(account_id))
-    response_object = {'status': 'get mail success'}
-    account = {}
-    mails = []
-    for single_account in ACCOUNTS:
-        if single_account['id'] == account_id:
-            account = single_account
-            break
-    #### if there are mails of the account, clear them
-    #### this step appears only removes mails on the odd position
-    #### temporarily, the function cannot work properly, thus I choose to reset the MAILS every time client logins
-    # for mail in MAILS:
-    #     print(mail['Subject'])
-    #     print(mail['account_id'])
-    # for mail in MAILS:
-    #     if (str)(mail['account_id']) == (str)(account_id):
-    #         # print('remove duplicated mail {}'.format(mail['Subject']))
-    #         MAILS.remove(mail)
-    MAILS.clear()
-    #### get mails of the account
-    mail_link = Login.login(account, True)
-    raw_mails = Mails.retrMail(mail_link, end_retr_num=60, start_retr_num=1)
-    account_mails = Mails.contentSeparator(raw_mails)
-    for account_mail in account_mails:
-        account_mail['id'] = uuid.uuid4().hex
-        account_mail['account_id'] = account_id
-        MAILS.append(account_mail)
-    #### return mails
-    for mail in MAILS:
-        if mail['account_id'] == account_id:
-            Login.log('find mail! {}'.format(mail['Subject']))
-            mails.append(mail)
-    response_object['mails'] = mails
-    return jsonify(response_object)
+# @app.route('/OneBox/<account_id>', methods=['GET'])
+# def get_mails(account_id):
 
 
 def add_test_mails(account_id):

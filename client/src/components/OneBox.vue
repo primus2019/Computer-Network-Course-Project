@@ -27,8 +27,7 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <h2>{{ message }}</h2>
-    <br>
+    <!-- <h2>{{ message }}</h2> -->
     <br>
     <pagebar :mails=mails v-model="clicked_page_index"></pagebar><br>
     <!-- <table class='table table-hover'>
@@ -216,11 +215,10 @@ export default {
           this.mails = res.data.mails;
           this.message = res.data.status;
           this.stop_loading();
-          // for test
         })
         .catch((error) => {
           // eslint-disable-next-line
-          console.error(error);
+          console.log(error);
         });
     },
     initAccount() {
