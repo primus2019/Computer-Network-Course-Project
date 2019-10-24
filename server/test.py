@@ -1,9 +1,12 @@
+import os
+import email.parser
+
+from email.policy import default
+
 from utils import Login
 from utils import Mails
 from utils import Transfer
-import os
-import email.parser
-from email.policy import default
+from utils import Sender
 
 
 def __test():
@@ -87,7 +90,10 @@ def __test():
     #     else:
     #         print('boundary not found: {}'.format(i))
     #         write(i, raw_mail, True)
-            
+
+
+def test_sender():
+    Sender.__test()
 
 def write_list(file_name, content, raw):
     if raw:
@@ -114,4 +120,4 @@ def write(file_name, content, raw):
 
 
 if __name__ == '__main__':
-    __test()
+    test_sender()

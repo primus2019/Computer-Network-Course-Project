@@ -22,11 +22,12 @@
 
       <b-collapse id="right-navbar" is-nav>
         <b-navbar-nav class="ml-auto">
+            <b-button variant="secondary" class='btn btn-primary' v-b-modal.send-modal :disabled=logined>send</b-button>
             <b-button variant="secondary" class='btn btn-primary' v-b-modal.login-modal>login</b-button>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <!-- <h2>{{ message }}</h2> -->
+    <h2>{{ message }}</h2>
     <br>
     <br>
     <pagebar :mails=mails v-model="clicked_page_index"></pagebar><br>
@@ -89,6 +90,49 @@
         </b-button-group>
       </b-form>
     </b-modal>
+    <b-modal ref='sendMailModal' id='send-modal' title='Send new a letter' hide-footer>
+      <b-form @submit='onSend' @reset='onDiscard' class='w-100'>
+        <b-form-group id='form-to-group' label='To:' label-for='form-to-input'>
+          <b-form-input
+            id='form-to-input'
+            type='text'
+            v-model='newMail.To'
+            required
+            placeholder='Enter receivers'
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group id='form-subject-group' label='Subject:' label-for='form-subject-input'>
+          <b-form-input
+            id='form-subject-input'
+            type='text'
+            v-model='newMail.Subject'
+            required
+            placeholder='Enter subject'
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group id='form-text-group' label='Text:' label-for='form-text-input'>
+          <b-form-textarea
+            id="form-text-input"
+            v-model="newMail.Text"
+            required
+            rows="3"
+            max-rows="6"
+            placeholder="Enter text content"
+          ></b-form-textarea>
+          <!-- <b-form-input
+            id='form-text-input'
+            type='text'
+            v-model='newMail.Text'
+            required
+            placeholder='Enter text content'
+          ></b-form-input> -->
+        </b-form-group>
+        <!-- <template v-slot:modal-footer> -->
+            <b-button type='submit' variant='primary'>Send</b-button>
+            <b-button type='reset' variant='danger'>Discard</b-button>
+        <!-- </template> -->
+      </b-form>
+    </b-modal>
     <b-modal ref="loading" hide-footer hide-header size='sm' body-bg-variant='primary' body-text-variant='light' centered>
         <b-button variant="primary" disabled>
             <b-spinner small type="grow"></b-spinner>
@@ -110,11 +154,19 @@ export default {
   data() {
     return {
       message: 'no message',
+      logined: true,
       clicked_page_index: 0,
       newAccount: {
         account: '',
         password: ''
       },
+      newMail: {
+        To: '',
+        Subject: '',
+        Text: '',
+        Application: []
+      },
+      account_id: '',
       mails: [
         {
           account_id: '12345',
@@ -175,6 +227,14 @@ export default {
       this.newAccount.account = '';
       this.newAccount.password = '';
     },
+    discardNewMail() {
+      this.newMail = {
+        To: '',
+        Subject: '',
+        Text: '',
+        Application: ''
+      };
+    },
     // 1
     onLogin(evt) {
       this.start_loading();
@@ -186,6 +246,7 @@ export default {
       };
       this.addAccount(payload);
       // this.initAccount();
+      this.logined = false;
       this.stop_loading();
     },
     onReset(evt) {
@@ -195,6 +256,22 @@ export default {
       this.initAccount();
       this.stop_loading();
     },
+    onSend(evt) {
+      this.start_loading();
+      evt.preventDefault();
+      this.$refs.sendMailModal.hide();
+      const payload = this.newMail;
+      this.sendMail(payload);
+      this.stop_loading();
+      this.discardNewMail();
+    },
+    onDiscard(evt) {
+      this.start_loading();
+      evt.preventDefault();
+      this.$refs.sendMailModal.hide();
+      this.discardNewMail();
+      this.stop_loading();
+    },
     // 2 add account to server, get and send accountID to getMails
     addAccount(payload) {
       this.start_loading();
@@ -202,6 +279,7 @@ export default {
       axios
         .post(path, payload)
         .then((res) => {
+          this.account_id = res.data.account_id;
           this.getMails(res.data.account_id);
           this.message = 'Account added!';
           // this.showMessage = true
@@ -211,7 +289,21 @@ export default {
           console.log(error);
           // this.getMails(payloadk)
         });
-        this.stop_loading();
+      this.stop_loading();
+    },
+    sendMail(payload) {
+      this.start_loading();
+      const path = `http://localhost:5000/OneBox/${this.account_id}`;
+      axios
+        .post(path, payload)
+        .then(() => {
+          this.messsage = 'Mail sent!';
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+        });
+      this.stop_loading();
     },
     getPreset() {
       this.getMails('12345');

@@ -6,6 +6,7 @@ from flask_cors import CORS
 from utils import Login
 from utils import Mails
 from utils import Transfer
+from utils import Sender
 
 BOOKS = [
     {
@@ -145,6 +146,25 @@ def add_account():
     else:
         # not ready yet
         response_object['account'] = MAILS
+    return jsonify(response_object)
+
+
+@app.route('/OneBox/<account_id>', methods=['POST'])
+def send_mail(account_id):
+    response_object = {'status': 'send mail success'}
+    Login.log('sending mail...')
+    vertification = {}
+    # find vertification of the account
+    for account in ACCOUNTS:
+        if account['id'] == account_id:
+            vertification = account
+            Login.log('find account: {}'.format((str)(vertification)))
+            break
+    # the posted data is in form of jsonified mail as sent to client, so do the reverse
+    post_data = request.get_json()
+    Sender.send_mail(vertification, post_data)
+    Login.log('Mail sent!')
+    response_object.update({'message': 'Mail sent!'})
     return jsonify(response_object)
 
 
