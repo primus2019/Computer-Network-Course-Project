@@ -95,7 +95,7 @@
           <b-form-input
             id='form-to-input'
             type='text'
-            v-model='newMail.To'
+            v-model='newMail_To'
             required
             placeholder='Enter receivers'
           ></b-form-input>
@@ -104,7 +104,7 @@
           <b-form-input
             id='form-subject-input'
             type='text'
-            v-model='newMail.Subject'
+            v-model='newMail_Subject'
             required
             placeholder='Enter subject'
           ></b-form-input>
@@ -112,24 +112,17 @@
         <b-form-group id='form-text-group' label='Text:' label-for='form-text-input'>
           <b-form-textarea
             id="form-text-input"
-            v-model="newMail.Text"
+            v-model="newMail_Text"
             required
             rows="3"
             max-rows="6"
             placeholder="Enter text content"
           ></b-form-textarea>
-          <!-- <b-form-input
-            id='form-text-input'
-            type='text'
-            v-model='newMail.Text'
-            required
-            placeholder='Enter text content'
-          ></b-form-input> -->
         </b-form-group>    
         <b-form-group id='form-application-group' label='File:' label-for='form-application-input'>
           <b-form-file
             id="form-application-input"
-            v-model="newMail.Application"
+            v-model="newMail_Application"
             placeholder="Choose a file or drop it here..."
             drop-placeholder="Drop file here..."
           ></b-form-file>
@@ -167,12 +160,10 @@ export default {
         account: '',
         password: ''
       },
-      newMail: {
-        To: '',
-        Subject: '',
-        Text: '',
-        Application: null
-      },
+      newMail_To: '',
+      newMail_Subject: '',
+      newMail_Text: '',
+      newMail_Application: null,
       account_id: '',
       mails: [
         {
@@ -230,16 +221,16 @@ export default {
         });
     },
     initAccount() {
-      this.newAccount.account = '';
-      this.newAccount.password = '';
+      this.newAccount = {
+        account: '',
+        password: ''
+      };
     },
     discardNewMail() {
-      this.newMail = {
-        To: '',
-        Subject: '',
-        Text: '',
-        Application: null
-      };
+      this.newMail_To = '';
+      this.newMail_Subject = '';
+      this.newMail_Text = '';
+      this.newMail_Application = null;
     },
     // 1
     onLogin(evt) {
@@ -266,10 +257,24 @@ export default {
       this.start_loading();
       evt.preventDefault();
       this.$refs.sendMailModal.hide();
+      // Application is a js File object
       // const reader = new FileReader();
-      // reader.readAsArrayBuffer(this.newMail.Application.readAsArrayBuffer());
-      this.newMail.Application = this.newMail.Application.name;
-      const payload = this.newMail;
+      // // reader.onload = function (e) {};
+      // reader.addEventListener('load', function () {
+      //   this.newMail_Application = reader.result.toString();
+      //   console.log(this.newMail_Application);
+      // }, false);
+      // reader.readAsDataURL(this.newMail_Application);
+      // console.log(this.newMail_Application);
+      const payload = {
+        To: this.newMail_To,
+        Subject: this.newMail_Subject,
+        Text: this.newMail_Text,
+        Application: this.newMail_Application.name
+      };
+      // console.log(this.newMail_Application);
+      // console.log(payload.Application);
+      // console.log(payload);
       this.sendMail(payload);
       this.stop_loading();
       this.discardNewMail();
@@ -326,6 +331,8 @@ export default {
   },
   created() {
     this.getPreset();
+    this.initAccount();
+    this.discardNewMail();
   }
 };
 </script>

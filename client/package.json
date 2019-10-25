@@ -39,7 +39,16 @@
       "linebreak-style": 0,
       "indent": "off",
       "max-len": 0,
-      "camelcase": 0
+      "camelcase": 0,
+      "func-names": 0,
+      "no-console": 0,
+      "dot-notation": 0,
+      "prefer-destructuring": ["error", {
+        "AssignmentExpression": {
+          "array": false,
+          "object": false
+        }
+      }]
     },
     "parserOptions": {
       "parser": "babel-eslint"

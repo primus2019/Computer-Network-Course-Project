@@ -1,6 +1,6 @@
 import smtplib
 
-from os.path import basename
+from os.path import basename, abspath, join
 from email.message import EmailMessage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -54,6 +54,11 @@ def send_mail(vertification, mail):
                 }
             ]
     })
+    if mail['Application'] is not None or mail['Application'] != '':
+        mail['contents'].append({
+            'content_type': 'multipart/application',
+            'content': mail['Application']
+        })
 
     # for test
     Login.log('mail: {}'.format((str)(mail)))
@@ -65,8 +70,9 @@ def send_mail(vertification, mail):
         if content['content_type'] == 'text/plain':
             multipart.attach(MIMEText(content['content'], 'plain', 'utf-8'))
         elif content['content_type'] == 'multipart/application':
-            attachment = MIMEApplication(open(content['content'], 'rb').read(), Name=basename(content['content']))
-            attachment['Content-Disposition'] = 'attachment; filename={}'.format(basename(content['content']))
+            Login.log('find absolute path for attachment: ' + join(abspath("attachments\\"), content['content']))
+            attachment = MIMEApplication(open(join(abspath("attachments\\"), content['content']), 'rb').read(), Name=content['content'])
+            attachment['Content-Disposition'] = 'attachment; filename={}'.format(content['content'])
             multipart.attach(attachment)
             # multipart.attach(MIMEApplication(content['content']))
         else:
