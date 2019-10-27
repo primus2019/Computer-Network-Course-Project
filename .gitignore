@@ -1,6 +1,5 @@
 # my packaging
 log/
-tmp/
 
 # HTML test samples
 *.html
