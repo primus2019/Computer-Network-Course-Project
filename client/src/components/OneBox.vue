@@ -270,7 +270,7 @@ export default {
         To: this.newMail_To,
         Subject: this.newMail_Subject,
         Text: this.newMail_Text,
-        Application: this.newMail_Application.name
+        Application: this.newMail_Application
       };
       // console.log(this.newMail_Application);
       // console.log(payload.Application);

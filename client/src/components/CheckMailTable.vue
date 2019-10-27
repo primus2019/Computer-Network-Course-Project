@@ -56,8 +56,9 @@
                         </span>
                         <span v-else-if="content.content_type === 'text/plain'">
                             <span v-html=content.content align-self='center'></span>
-                            <!-- {{  content.content  }} -->
                         </span>
+                        <downloadButton v-else-if="content.content_type === 'application/octet-stream'"
+                        :content=content></downloadButton>
                         <h1 v-else>this is {{  content.content_type  }}!</h1>
                     </div>
                 </template>
@@ -98,6 +99,8 @@
 </template>
 
 <script>
+import downloadButton from './DownloadButton.vue';
+
 export default {
     name: 'checkmailtable',
     props: ['mails', 'page_index'],
@@ -106,6 +109,9 @@ export default {
             clicked_index: 1,
             clicked_mail: {}
         };
+    },
+    components: {
+        downloadButton
     },
     methods: {
         changeindex(index) {

@@ -1,3 +1,4 @@
+import os
 import uuid
 import email
 
@@ -132,17 +133,16 @@ def add_account():
                 response_object['account_id'] = account['id']
                 response_object['message'] = 'account added!'
                 return jsonify(response_object)
+        account_id = uuid.uuid4().hex
         ACCOUNTS.append({
-            'id': uuid.uuid4().hex,
+            'id': account_id,
             'account': post_data.get('account'),
             'password': post_data.get('password')
         })
         response_object['message'] = 'account added!'
-        for account in ACCOUNTS:
-            if account['account'] == post_data.get('account'):
-                response_object['account_id'] = account['id']
-                add_test_mails(account['id']) # for test
-                break
+        response_object['account_id'] = account_id
+        if not os.path.isdir('tmp/{}/'.format(account_id)):
+            os.mkdir('tmp/{}/'.format(account_id))
     else:
         # not ready yet
         response_object['account'] = MAILS
@@ -190,17 +190,25 @@ def send_mail(account_id):
         MAILS.clear()
         #### get mails of the account
         mail_link = Login.login(account, True)
-        raw_mails = Mails.retrMail(mail_link, end_retr_num=60, start_retr_num=1)
-        account_mails = Mails.contentSeparator(raw_mails)
+        # raw_mails = Mails.retrMail(mail_link, end_retr_num=60, start_retr_num=10)
+        # retrieve all the mails
+        raw_mails = Mails.retrMail(mail_link)
+        account_mails = Mails.contentSeparator(account_id, raw_mails)
         for account_mail in account_mails:
             account_mail['id'] = uuid.uuid4().hex
             account_mail['account_id'] = account_id
             MAILS.append(account_mail)
         #### return mails
-        for mail in MAILS:
+        #### NOTICE: the function is designed to dynamically send mail to client at 100 a time
+        #### and in reverse
+        for mail in MAILS[-100:]:
             if mail['account_id'] == account_id:
-                Login.log('find mail! {}'.format(mail['Subject']))
+                if 'Subject' in mail.keys():
+                    Login.log('find mail! {}'.format(mail['Subject']))
+                else:
+                    Login.log('find mail without Subject!\n{}'.format((str)(mail)))
                 mails.append(mail)
+        mails.reverse()
         response_object['mails'] = mails
         return jsonify(response_object)
 
@@ -223,5 +231,5 @@ def add_test_mails(account_id):
 
 
 if __name__ == '__main__':
-    Login.clearLog()
+    # Login.clearLog()
     app.run()

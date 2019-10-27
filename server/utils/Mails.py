@@ -1,6 +1,9 @@
 import re
+import os
 import email
 import base64
+import mimetypes
+import uuid
 
 from email.parser import HeaderParser
 from utils import Transfer
@@ -126,7 +129,7 @@ def separateContents(raw_mail, boundary):
     return mail_content
 
 
-def contentSeparator(raw_mails):
+def contentSeparator(account_id, raw_mails):
     '''enter lists of raw mails and returns list of list of jsons of mail content
     like [[{json of a content}, {json of a content}, ...], [another mail], ...]
     '''
@@ -142,29 +145,61 @@ def contentSeparator(raw_mails):
         })
         
         e = email.message_from_string(raw_mail)
+
+        # is_multi_alt = False
+        # is_multi_rel = False
+
         if e.is_multipart():
+            app_count = 0
             for payload in e.walk():
-                separated_mail['contents'].append({
-                            'content_type': payload.get_content_type(),
-                            'content':      payload.get_payload(decode=True),
-                            'content_charset': payload.get_content_charset(),
-                            'is_multipart': True
-                        
-                })
+                # for test
+                if payload.get_content_type() not in ['multipart/alternative', 'text/plain', 'text/html']:
+                    Login.log('{}:    new content type: {}'.format(i, payload.get_content_type()))
+                # if payload.get_content_type() == 'multipart/alternative':
+                #     is_multi_alt = True
+                #     continue
+                # elif payload.get_content_type() == 'multipart/related':
+                #     is_multi_rel = True
+                #     continue
+                ## if is text/html, text/plain
+                content_basic_info = {
+                    'content_type': payload.get_content_type(),
+                    'content':      payload.get_payload(decode=True),
+                    'content_charset': payload.get_content_charset(),
+                    'is_multipart': True,
+                }
+                if payload.get_content_type() == 'application/octet-stream':
+                    content_basic_info.update(deal_with_application(account_id, payload, i, app_count))
+                    app_count += 1
+                separated_mail['contents'].append(content_basic_info)
         else:
-            separated_mail['contents'].append({
+            content_basic_info = {
                 'content_type': e.get_content_type(),
                 'content':      (str)(e.get_payload(decode=True)),
                 'content_charset': e.get_content_charset(),
                 'is_multipart': False
-            })
-        Login.log('contentSeparator: dealing with mail {}'.format(i))
+            }
+            if e.get_content_type() == 'application/octet-stream':
+                content_basic_info.update(deal_with_application(account_id, e, i, 0))
+            separated_mail['contents'].append(content_basic_info)
+        Login.log('{}: contentSeparator dealing with mail'.format(i))
         __write_mail_contents(separated_mail, i)
         separated_mail = deal_with_nonetype(separated_mail)
         separated_mail = deal_with_content(separated_mail)
         separated_mail = deal_with_nonetype(separated_mail)
         separated_mail = deal_with_newline(separated_mail)
         separated_mails.append(separated_mail)
+
+
+    for i, separated_mail in enumerate(separated_mails):
+        text_content, html_content = -1, -1
+        for j, content in enumerate(separated_mail['contents']):
+            if content['content_type'] == 'text/plain':
+                text_content = j
+            elif content['content_type'] == 'text/html' and text_content != -1:
+                del separated_mail['contents'][text_content]
+                Login.log('{}: !!!!!!!!!!!!!!!!!!!!!!!!!remove duplicate text info'.format(i))
+                break
     return separated_mails
 
 
@@ -183,6 +218,8 @@ def deal_with_newline(separated_mail):
             mail_content['content'] = mail_content['content'].replace(r'\n', '</br>')
         elif mail_content['content_type'] == 'text/html':
             mail_content['content'] = mail_content['content'].replace(r'\n', '')
+        elif mail_content['content_type'] == 'application/octet-stream':
+            continue
         else:
             mail_content['content'] = mail_content['content'].replace(r'\n', '</br>')
     return separated_mail
@@ -190,10 +227,11 @@ def deal_with_newline(separated_mail):
 
 def deal_with_content(separated_mail):
     for mail_content in separated_mail['contents']:
+        # Login.log('separated_mail["contents"]["content"]: {}'.format(type(mail_content['content'])))
         if type(mail_content['content']) == str:
-            continue
-        if mail_content['content_charset'] == 'utf-8':
-            mail_content['content'] = str(mail_content['content'], 'utf-8', 'ignore')# .decode('utf-8')
+            mail_content['content'] = mail_content['content'][2:-1]
+        elif mail_content['content_charset'] in ['utf-8', 'utf8', None]:
+            mail_content['content'] = mail_content['content'].decode('utf-8', 'ignore') # str(mail_content['content'], 'utf-8', 'ignore')# .decode('utf-8')
         elif mail_content['content_charset'] == 'gbk':
             mail_content['content'] = str(mail_content['content'], 'gbk', 'ignore')# .decode('gbk')
         elif mail_content['content_charset'] == 'gb18030':
@@ -204,6 +242,25 @@ def deal_with_content(separated_mail):
     return separated_mail
 
 
+def deal_with_application(account_id, content, mail_no, app_no):
+    Login.log('{}: octet-stream'.format(mail_no))
+    file_name = content.get_filename()
+    if not file_name:
+        extension = mimetypes.guess_extension(content.get_content_type())
+        if not extension:
+            # Use a generic bag-of-bits extension
+            extension = '.bin'
+        file_name = '{}{}'.format(uuid.uuid4().hex, extension)
+    file_name = file_name.replace('\n', ' ').replace('<', ' ').replace('>', ' ').replace(':', ' ').replace('\"', ' ').replace('/', ' ').replace('\\', ' ').replace('|', ' ').replace('?', ' ').replace('*', ' ').split()[-1]
+    Login.log('{}: octet-stream: {} writing...'.format(mail_no, file_name))
+    with open(os.path.join('tmp/{}/'.format(account_id), file_name), 'wb') as file:
+        file.write(content.get_payload(decode=True))
+    
+    full_path = os.path.join('tmp/{}/'.format(account_id), file_name)
+    # file_bits = (str)(content.get_payload(decode=False))
+    Login.log('{}: octet-stream: {} written'.format(mail_no, file_name))
+    return {'base_name': file_name, 'full_path': full_path}
+
 
 def __write_mail_contents(separated_mail, i):
     with open('log/{}.log'.format(i), 'w+') as file:
@@ -212,4 +269,3 @@ def __write_mail_contents(separated_mail, i):
             file.write('content: {}\n'.format(content['content']))
             file.write('content_charset: {}\n'.format(content['content_charset']))
             file.write('++++++++++++++++++++++++++++++++++++++++++++++++\n')
-
