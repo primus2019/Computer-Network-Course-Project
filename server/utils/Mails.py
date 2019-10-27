@@ -198,7 +198,7 @@ def contentSeparator(account_id, raw_mails):
                 text_content = j
             elif content['content_type'] == 'text/html' and text_content != -1:
                 del separated_mail['contents'][text_content]
-                Login.log('{}: !!!!!!!!!!!!!!!!!!!!!!!!!remove duplicate text info'.format(i))
+                Login.log('{}: remove duplicate text info'.format(i))
                 break
     return separated_mails
 
@@ -269,3 +269,8 @@ def __write_mail_contents(separated_mail, i):
             file.write('content: {}\n'.format(content['content']))
             file.write('content_charset: {}\n'.format(content['content_charset']))
             file.write('++++++++++++++++++++++++++++++++++++++++++++++++\n')
+
+
+def __save_raw_mails(mail, account_id, mail_id):
+    with open('mails/{}/{}.log'.format(account_id, mail_id), 'w+', encoding='utf-8') as file:
+        file.write('\n'.join(mail))

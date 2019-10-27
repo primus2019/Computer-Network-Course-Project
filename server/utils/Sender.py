@@ -1,4 +1,5 @@
 import smtplib
+import email
 
 from os.path import basename, abspath, join
 from email.message import EmailMessage
@@ -6,6 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.mime.application import MIMEApplication
+from email.mime.message import MIMEMessage
 
 from utils import Login
 
@@ -40,7 +42,7 @@ def __test():
     )
 
 
-def send_mail(vertification, mail):
+def send_mail(vertification, mail, account_id='', reply_mail_id=''):
     mail_host = 'smtp.163.com'
 
     # preprocessing
@@ -54,16 +56,29 @@ def send_mail(vertification, mail):
                 }
             ]
     })
-    if mail['Application'] is not None or mail['Application'] != '':
+    if mail['Application'] is not None and mail['Application'] != '':
         mail['contents'].append({
             'content_type': 'multipart/application',
             'content': mail['Application']
         })
+    
+    # prepare reply mail
+    if account_id != '' and reply_mail_id != '':
+        origin_mail = email.message_from_string(open('mails/{}/{}.log'.format(account_id, reply_mail_id), 'r', encoding='utf-8').read())
+        for part in origin_mail.walk():
+            if (part.get('Content-Disposition') and part.get('Content-Disposition').startswith("attachment")):
+                part.set_type("text/plain")
+                part.set_payload("Attachment removed: %s (%s, %d bytes)"
+                                %(part.get_filename(), 
+                                part.get_content_type(), 
+                                len(part.get_payload(decode=True))))
+                del part["Content-Disposition"]
+                del part["Content-Transfer-Encoding"]
 
     # for test
     Login.log('mail: {}'.format((str)(mail)))
 
-    multipart = MIMEMultipart()
+    multipart = MIMEMultipart('mixed')
     multipart['Subject'] = mail['Subject']
     multipart['From'] = vertification['account']
     for content in mail['contents']:
@@ -77,6 +92,12 @@ def send_mail(vertification, mail):
             # multipart.attach(MIMEApplication(content['content']))
         else:
             Login.log('error in content_type: {}'.format(content['content_type']))
+    if account_id != '' and reply_mail_id != '':
+        multipart["Message-ID"] = email.utils.make_msgid()
+        multipart["In-Reply-To"] = origin_mail["Message-ID"]
+        multipart["References"] = origin_mail["Message-ID"]
+        multipart['Subject'] = 'Re: {}'.format(origin_mail['Subject'])
+        multipart.attach(MIMEMessage(origin_mail))
     try:
         smtp = smtplib.SMTP_SSL(mail_host, 465)
         smtp.login(vertification['account'], vertification['password'])

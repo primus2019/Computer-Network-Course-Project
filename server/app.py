@@ -122,6 +122,8 @@ def single_book(book_id):
 
 @app.route('/OneBox/accounts', methods=['POST', 'GET'])
 def add_account():
+    Login.clearLog()
+    Login.clearCache()
     # print('add_account')
     response_object = {'status': 'add account success'}
     if request.method == 'POST':
@@ -141,8 +143,14 @@ def add_account():
         })
         response_object['message'] = 'account added!'
         response_object['account_id'] = account_id
+        if not os.path.isdir('tmp/'):
+            os.mkdir('tmp/')
+        if not os.path.isdir('mails/'):
+            os.mkdir('mails/')
         if not os.path.isdir('tmp/{}/'.format(account_id)):
             os.mkdir('tmp/{}/'.format(account_id))
+        if not os.path.isdir('mails/{}/'.format(account_id)):
+            os.mkdir('mails/{}/'.format(account_id))
     else:
         # not ready yet
         response_object['account'] = MAILS
@@ -167,8 +175,7 @@ def send_mail(account_id):
         Login.log('Mail sent!')
         response_object.update({'message': 'Mail sent!'})
         return jsonify(response_object)
-    else: # GET
-        Login.clearLog()
+    else: # GET, when getting mails
         # print('get_mails: {}'.format(account_id))
         response_object = {'status': 'get mail success'}
         account = {}
@@ -194,14 +201,16 @@ def send_mail(account_id):
         # retrieve all the mails
         raw_mails = Mails.retrMail(mail_link)
         account_mails = Mails.contentSeparator(account_id, raw_mails)
-        for account_mail in account_mails:
-            account_mail['id'] = uuid.uuid4().hex
+        for raw_mail, account_mail in zip(raw_mails, account_mails):
+            mail_id = uuid.uuid4().hex
+            Mails.__save_raw_mails(raw_mail, account_id, mail_id)
+            account_mail['id'] = mail_id
             account_mail['account_id'] = account_id
             MAILS.append(account_mail)
         #### return mails
         #### NOTICE: the function is designed to dynamically send mail to client at 100 a time
         #### and in reverse
-        for mail in MAILS[-100:]:
+        for mail in MAILS:
             if mail['account_id'] == account_id:
                 if 'Subject' in mail.keys():
                     Login.log('find mail! {}'.format(mail['Subject']))
@@ -213,8 +222,24 @@ def send_mail(account_id):
         return jsonify(response_object)
 
 
-# @app.route('/OneBox/<account_id>', methods=['GET'])
-# def get_mails(account_id):
+@app.route('/OneBox/<account_id>/<mail_id>', methods=['POST'])
+def reply_mail(account_id, mail_id):
+    if request.method == 'POST':
+        response_object = {'status': 'reply mail success'}
+        Login.log('replying mail...')
+        vertification = {}
+        # find vertification of the account
+        for account in ACCOUNTS:
+            if account['id'] == account_id:
+                vertification = account
+                Login.log('find account: {}'.format((str)(vertification)))
+                break
+        # the posted data is in form of jsonified mail as sent to client, so do the reverse
+        post_data = request.get_json()
+        Sender.send_mail(vertification, post_data, account_id, mail_id)
+        Login.log('Mail replied!')
+        response_object.update({'message': 'Mail replied!'})
+        return jsonify(response_object)
 
 
 def add_test_mails(account_id):

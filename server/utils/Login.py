@@ -1,4 +1,5 @@
 import re
+import os
 
 from poplib import POP3_SSL
 # from server.utils.Mails import *
@@ -54,9 +55,26 @@ def ask():
 
     return login_info
 
+
 def log(text):
     with open('log/web.log', 'a+', encoding='utf-8') as file:
         file.write(text + '\n')
 
+
 def clearLog():
+    for file in os.listdir('log/'):
+        os.remove(os.path.join('log/', file))
     open('log/web.log', 'w+', encoding='utf-8').close()
+
+
+def clearCache():
+    for account_folder in os.listdir('mails/'):
+        for mail in os.listdir(os.path.join('mails/', account_folder)):
+            print('removing {}'.format(os.path.join('mails/', account_folder, mail)))
+            os.remove(os.path.join('mails/', account_folder, mail))
+        os.rmdir(os.path.join('mails/', account_folder))
+    for account_folder in os.listdir('tmp/'):
+        for mail in os.listdir(os.path.join('tmp/', account_folder)):
+            print('removing {}'.format(os.path.join('tmp/', account_folder, mail)))
+            os.remove(os.path.join('tmp/', account_folder, mail))
+        os.rmdir(os.path.join('tmp/', account_folder))

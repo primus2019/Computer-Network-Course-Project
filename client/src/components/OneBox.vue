@@ -23,7 +23,7 @@
       <b-collapse id="right-navbar" is-nav>
         <b-navbar-nav class="ml-auto">
             <b-button variant="secondary" class='btn btn-primary' v-b-modal.send-modal :disabled=logined>send</b-button>
-            <b-button variant="secondary" class='btn btn-primary' v-b-modal.login-modal>login</b-button>
+            <b-button variant="secondary" class='btn btn-primary' v-b-modal.login-modal :disabled="!logined">login</b-button>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -133,7 +133,7 @@
         <!-- </template> -->
       </b-form>
     </b-modal>
-    <b-modal ref="loading" hide-footer hide-header size='sm' body-bg-variant='primary' body-text-variant='light' centered>
+    <b-modal ref="loadingModal" id="loading-modal" hide-footer hide-header size='sm' body-bg-variant='primary' body-text-variant='light' centered>
         <b-button variant="primary" disabled>
             <b-spinner small type="grow"></b-spinner>
             Loading...
@@ -319,14 +319,14 @@ export default {
           console.log(error);
         });
     },
-    getPreset() {
-      this.getMails('12345');
-    },
     start_loading() {
-      this.$refs.loading.show();
+      this.$refs.loadingModal.show();
     },
     stop_loading() {
-      this.$refs.loading.hide();
+      this.$refs.loadingModal.hide();
+    },
+    getPreset() {
+      this.getMails('12345');
     }
   },
   created() {
