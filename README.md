@@ -3,6 +3,11 @@
 ## Overview
 
 - [Weekly overview - 8](#w8)
+- [Weekly overview - 7](#w7)
+- [Weekly overview - 6](#w6)
+- [Weekly overview - 5](#w5)
+- [Weekly overview - 4](#w4)
+- [Weekly overview - 3](#w3)
 - [Weekly overview - 2](#w2)
 - [Notes](#notes)
 
@@ -21,6 +26,109 @@
 - Error tolerance and reminding
 - GUI packaging
 - Documents
+
+## W7
+
+### Current features
+
+- Login with account and password, automatically detect and choose the host and port
+- Mail overview with valid mail content parts based on MIME protocol
+- Dynamic display of mail information
+
+### Potential future features
+
+- Attachments identification and download
+- Optimized cache management
+
+### Faced problems
+
+- Data exchange of JavaScript File object from server to client
+- Privacy preserving in cache
+
+## W6
+
+### Current features
+
+- Login with account and password, automatically detect and choose the host and port
+- Mail overview with valid mail content parts based on MIME protocol
+- Dynamic display of mail information
+
+### Potential future features
+
+- Attachments identification and download
+- Optimized cache management
+- Prettify website appearance
+
+### Faced problems
+
+- Data exchange of JavaScript File object from server to client
+- Privacy preserving in cache
+
+## W5
+
+### ==Big change!==
+
+Because of the Tkinter components do not support standard UTF-16 charsets, the GUI should not support display of Chinese characters. As this is the case of the GUI and the backend is not effected, further investigation of better GUI support, and also the whole project design is on the way.
+
+==Thanks to advice of my roommate, I am trying to shift the project into the B/S architecture based on web development. I choose the frontend frame Vue-CLI and backend support Flask to rebuild my projects.==
+
+### Current features
+
+- Part of login and mail retrieving functions on the backend
+- Basic frame of client and server
+
+### Future features
+
+- Integration of previous login and mail retrieving codes with new Flask server
+- Build basic website structure based on Vue-CLI application
+- Build and optimization of communication between client and server based on HTTP protocol
+
+## W4
+
+### ==Big change!==
+
+==Because of the Tkinter components do not support standard UTF-16 charsets, the GUI should not support display of Chinese characters. As this is the case of the GUI and the backend is not effected, further investigation of better GUI support, and also the whole project design is on the way.==
+
+### Current features
+
+- Part of login and mail retrieving functions on the backend
+
+### Faced problems
+
+- Primary part of the current project does not support necessary mail contents
+
+## W3
+
+### 目前已完成的进度
+
+- 完成了确定选题、初步构思
+
+  - 用Python搭建实现以下功能的GUI：
+
+    - [x] ==GUI界面搭建(Tkinter)==
+    - [ ] 登陆常用邮箱(poplib, temp)
+      - [x] 163
+      - [ ] QQ
+      - [ ] outlook
+      - [ ] mails.tsinghua
+      - [ ] sem.tsinghua
+    - [x] 收取和查看已有邮件(re, base64, quoari)
+      - [x] 所有时间
+      - [x] ==支持刷新==
+      - [x] ==根据需要加载==
+    - [ ] ==支持查看的内容格式(Content-type)==
+      - [ ] ==text/html==
+      - [ ] ==text/plain==
+      - [ ] ==Others==
+    - [ ] 删除邮件
+    - [ ] 回复/发送邮件
+    - [x] 退出邮箱
+
+### 未来一周要完成的任务
+
+- 完成删除邮件
+- 完善GUI
+- 实现Tkinter对邮件内容的显示支持
 
 ## W2
 
