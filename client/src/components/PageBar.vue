@@ -3,20 +3,20 @@
         <!-- <b-pagination-nav no-page-detect :number-of-pages="mails.length / 10 + 1" :limit=10 @click="changePageIndex(index)"></b-pagination-nav> -->
         <b-button-toolbar key-nav aria-label="Toolbar with button groups">
             <b-button-group class="mx-1">
-                <b-button variant="success" @click="set_smallest">&laquo;</b-button>
-                <b-button variant="success" @click="set_smaller">&lsaquo;</b-button>
+                <b-button variant="secondary" @click="set_smallest">&laquo;</b-button>
+                <b-button variant="secondary" @click="set_smaller">&lsaquo;</b-button>
             </b-button-group>
             <b-button-group class="mx-1">
                 <!-- <div v-for='(mail, index) in mails.slice(smallest_page_index * 10, (smallest_page_index + 10) * 10)' :v-bind="smallest_page_index" :key='index'> -->
                 <div v-for='(mail, index) in mails_on_display' :key='index'>
-                    <b-button variant="info" v-if='index % 10 === 0' @click="changePageIndex(index)">
+                    <b-button variant="secondary" v-if='index % 10 === 0' @click="changePageIndex(index)">
                         {{ index / 10 + 1 + smallest_page_index }}
                     </b-button>
                 </div>
             </b-button-group>
             <b-button-group class="mx-1">
-                <b-button variant="success" @click="set_bigger">&rsaquo;</b-button>
-                <b-button variant="success" @click="set_biggest">&raquo;</b-button>
+                <b-button variant="secondary" @click="set_bigger">&rsaquo;</b-button>
+                <b-button variant="secondary" @click="set_biggest">&raquo;</b-button>
             </b-button-group>
         </b-button-toolbar>
     </div>
