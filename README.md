@@ -1,8 +1,28 @@
 # Computer-Network-Course-Project
 
-#### CN_W2_Project_Progress
+## Overview
 
-#### 目前已完成的进度
+- [Weekly overview - 8](#w8)
+- [Weekly overview - 2](#w2)
+
+## W8
+
+### Current features
+
+- Current features
+  - Login with account and password, automatically detect and choose the host and port
+  - Mail overview with valid mail content parts based on MIME protocol
+  - Attachments download, allowing alternative download path and filename
+  - Dynamic display of mail information
+  - Cache management
+- Potential future features
+  - Error tolerance and reminding
+  - GUI packaging
+  - Documents
+
+## W2
+
+### 目前已完成的进度
 
 - 完成了确定选题、初步构思
 
@@ -24,15 +44,15 @@
     - [ ] 回复/发送邮件
     - [ ] 退出邮箱
 
-#### 未来一周要完成的任务
+### 未来一周要完成的任务
 
 - 完成收取和查看已有邮件
 - 完成删除邮件
 - 完成GUI的初步搭建
 
-#### 笔记
+### 笔记
 
-##### MIME 协议
+#### MIME 协议
 
 - 常见格式为：
   - ![snip_1](misc/snip_1.png)
@@ -56,7 +76,7 @@
     - Q: quoted-printable
     - 7bit or 8bit: not found yet
 
-##### 处理MIME协议格式的初步设想
+#### 处理MIME协议格式的初步设想
 
 - 获得邮件初始信息
 - capture信件基本信息
