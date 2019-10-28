@@ -4,21 +4,23 @@
 
 - [Weekly overview - 8](#w8)
 - [Weekly overview - 2](#w2)
+- [Notes](#notes)
 
 ## W8
 
 ### Current features
 
-- Current features
-  - Login with account and password, automatically detect and choose the host and port
-  - Mail overview with valid mail content parts based on MIME protocol
-  - Attachments download, allowing alternative download path and filename
-  - Dynamic display of mail information
-  - Cache management
-- Potential future features
-  - Error tolerance and reminding
-  - GUI packaging
-  - Documents
+- Login with account and password, automatically detect and choose the host and port
+- Mail overview with valid mail content parts based on MIME protocol
+- Attachments download, allowing alternative download path and filename
+- Dynamic display of mail information
+- Cache management
+
+### Potential future features
+
+- Error tolerance and reminding
+- GUI packaging
+- Documents
 
 ## W2
 
@@ -50,7 +52,7 @@
 - 完成删除邮件
 - 完成GUI的初步搭建
 
-### 笔记
+## Notes
 
 #### MIME 协议
 
