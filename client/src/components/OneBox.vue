@@ -49,7 +49,7 @@
       <checkmailrow :mails=mails></checkmailrow>
     </table> -->
     <checkmailtable :mails=mails :page_index=clicked_page_index></checkmailtable>
-    <table class='table table-hover'>
+    <!-- <table class='table table-hover'>
       <thead>
         <tr>
           <th scope='col'>account</th>
@@ -62,7 +62,7 @@
           <td>{{ newAccount.password }}</td>
         </tr>
       </tbody>
-    </table>
+    </table> -->
     <b-modal ref='accountLogin' id='login-modal' title='Login' hide-footer>
       <b-form @submit='onLogin' @reset='onReset' class='w-100'>
         <b-form-group id='form-account-group' label='账号:' label-for='form-account-input'>
