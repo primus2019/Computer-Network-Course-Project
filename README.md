@@ -27,6 +27,8 @@
 - GUI packaging
 - Documents
 
+[return](#overview)
+
 ## W7
 
 ### Current features
@@ -44,6 +46,8 @@
 
 - Data exchange of JavaScript File object from server to client
 - Privacy preserving in cache
+
+[return](#overview)
 
 ## W6
 
@@ -64,13 +68,15 @@
 - Data exchange of JavaScript File object from server to client
 - Privacy preserving in cache
 
+[return](#overview)
+
 ## W5
 
-### ==Big change!==
+### **Big change!**
 
 Because of the Tkinter components do not support standard UTF-16 charsets, the GUI should not support display of Chinese characters. As this is the case of the GUI and the backend is not effected, further investigation of better GUI support, and also the whole project design is on the way.
 
-==Thanks to advice of my roommate, I am trying to shift the project into the B/S architecture based on web development. I choose the frontend frame Vue-CLI and backend support Flask to rebuild my projects.==
+**Thanks to advice of my roommate, I am trying to shift the project into the B/S architecture based on web development. I choose the frontend frame Vue-CLI and backend support Flask to rebuild my projects.**
 
 ### Current features
 
@@ -83,11 +89,13 @@ Because of the Tkinter components do not support standard UTF-16 charsets, the G
 - Build basic website structure based on Vue-CLI application
 - Build and optimization of communication between client and server based on HTTP protocol
 
+[return](#overview)
+
 ## W4
 
-### ==Big change!==
+### **Big change!**
 
-==Because of the Tkinter components do not support standard UTF-16 charsets, the GUI should not support display of Chinese characters. As this is the case of the GUI and the backend is not effected, further investigation of better GUI support, and also the whole project design is on the way.==
+**Because of the Tkinter components do not support standard UTF-16 charsets, the GUI should not support display of Chinese characters. As this is the case of the GUI and the backend is not effected, further investigation of better GUI support, and also the whole project design is on the way.**
 
 ### Current features
 
@@ -97,6 +105,8 @@ Because of the Tkinter components do not support standard UTF-16 charsets, the G
 
 - Primary part of the current project does not support necessary mail contents
 
+[return](#overview)
+
 ## W3
 
 ### 目前已完成的进度
@@ -105,7 +115,7 @@ Because of the Tkinter components do not support standard UTF-16 charsets, the G
 
   - 用Python搭建实现以下功能的GUI：
 
-    - [x] ==GUI界面搭建(Tkinter)==
+    - [x] **GUI界面搭建(Tkinter)**
     - [ ] 登陆常用邮箱(poplib, temp)
       - [x] 163
       - [ ] QQ
@@ -114,12 +124,12 @@ Because of the Tkinter components do not support standard UTF-16 charsets, the G
       - [ ] sem.tsinghua
     - [x] 收取和查看已有邮件(re, base64, quoari)
       - [x] 所有时间
-      - [x] ==支持刷新==
-      - [x] ==根据需要加载==
-    - [ ] ==支持查看的内容格式(Content-type)==
-      - [ ] ==text/html==
-      - [ ] ==text/plain==
-      - [ ] ==Others==
+      - [x] **支持刷新**
+      - [x] **根据需要加载**
+    - [ ] **支持查看的内容格式(Content-type)**
+      - [ ] **text/html**
+      - [ ] **text/plain**
+      - [ ] **Others**
     - [ ] 删除邮件
     - [ ] 回复/发送邮件
     - [x] 退出邮箱
@@ -129,6 +139,8 @@ Because of the Tkinter components do not support standard UTF-16 charsets, the G
 - 完成删除邮件
 - 完善GUI
 - 实现Tkinter对邮件内容的显示支持
+
+[return](#overview)
 
 ## W2
 
@@ -160,6 +172,8 @@ Because of the Tkinter components do not support standard UTF-16 charsets, the G
 - 完成删除邮件
 - 完成GUI的初步搭建
 
+[return](#overview)
+
 ## Notes
 
 #### MIME 协议
@@ -180,7 +194,7 @@ Because of the Tkinter components do not support standard UTF-16 charsets, the G
 - 关于字符集和编码
   - 字符集
     - byte
-    - utf-8
+    - UTF-8
   - 编码
     - B: base64
     - Q: quoted-printable
@@ -207,10 +221,12 @@ Because of the Tkinter components do not support standard UTF-16 charsets, the G
 
 ##### Tkinter
 
-wedgetsxuan'y
+wedgets
 
 - How Listbox and Other wedgets link
   - Listbox.curselection() 
     - returns the index of chosen items preset in the listbox object
 - How to present MIME context in Tkinter GUI
 - How to refresh mailbox
+
+[return](#overview)
