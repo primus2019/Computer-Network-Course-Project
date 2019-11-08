@@ -18,7 +18,7 @@ The B/S structure has a frontend(client) and backend(server). The frontend is bu
 
 For server: 
 
-# server
+![server](misc/server.png)
 
 - \_\_pycache\_\_, .vscode: launch jsonified configurations
 - env: virtualization for server environment
@@ -36,7 +36,7 @@ For server:
 
 For client: 
 
-# client
+![client](misc/client.png)
 
 - src
   - assets: static client resources
@@ -116,37 +116,37 @@ when the cmd shows that the client is working properly, open your Chrome browser
 
 the application looks like this: 
 
-# demo
+![demo](misc/demo.png)
 
 and click login: 
 
-# login
+![login](misc/login.png)
 
 enter the information, confirm and wait for reply(the server is working hard to process your mails!)
 
 when the mails are ok and sent to client, it looks like this:
 
-# mails
+![mails](misc/mails.png)
 
 click one mail, we get: 
 
-# checkmail
+![checkmail](misc/checkmail.png)
 
 the Date, From, To details are presented on the header.
 
 Click Reply, we get: 
 
-# reply
+![reply](misc/reply.png)
 
 click Browse in attachment column, we get: 
 
-# attach
+![attach](misc/attach.png)
 
 (the attachment can currently be obtained only from 'server/attachment' folder, as the application is not authorized to browse system files at other positions)
 
 and for mails that contains attachment(s):
 
-# getattach
+![getattach](misc/getattach.png)
 
 press ctrl+C to shut the client and server(alternative sequence is ok)
 
