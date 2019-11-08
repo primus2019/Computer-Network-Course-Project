@@ -2,12 +2,14 @@ import re
 import os
 
 from poplib import POP3_SSL
+from smtplib import SMTP_SSL
+from imaplib import IMAP4_SSL
 # from server.utils.Mails import *
 from utils import Mails
 # from Mails import *
 
 
-def login(login_info=None, test=False):
+def login(login_info=None, test=False, method='pop3'):
     try:
         if login_info is None:
             login_info = ask()
@@ -27,7 +29,12 @@ def login(login_info=None, test=False):
                 'account':     'primus1998@163.com',
                 'password':      'jlc123456'
             }
-        mail_link = POP3_SSL(login_info['pop_host'])
+        if method == 'pop3':
+            mail_link = POP3_SSL(login_info['pop_host'])
+        elif method == 'smtp':
+            mail_link = SMTP_SSL(login_info['pop_host'])
+        elif method == 'imap':
+            mail_link == IMAP4_SSL(login_info['pop_host'])
         mail_link.set_debuglevel(0)
         mail_link.user(login_info['account'])
         mail_link.pass_(login_info['password'])

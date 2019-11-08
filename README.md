@@ -2,6 +2,7 @@
 
 ## Overview
 
+- [Weekly overview - 9][#w9]
 - [Weekly overview - 8](#w8)
 - [Weekly overview - 7](#w7)
 - [Weekly overview - 6](#w6)
@@ -10,6 +11,19 @@
 - [Weekly overview - 3](#w3)
 - [Weekly overview - 2](#w2)
 - [Notes](#notes)
+
+## W9
+
+### Current features
+
+- Login with account and password, automatically detect and choose the host and port
+- Alternatively apply SMTP, POP3, IMAP protocol when login
+- Mail overview with valid mail content parts based on MIME protocol
+- Attachments download, allowing alternative download path and filename
+- Dynamic display of mail information
+- Cache management
+- Documents
+- GUI packaging
 
 ## W8
 
