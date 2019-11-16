@@ -2,7 +2,7 @@
 
 ## Overview
 
-- [Weekly overview - 9][#w9]
+- [Weekly overview - 9](#w9)
 - [Weekly overview - 8](#w8)
 - [Weekly overview - 7](#w7)
 - [Weekly overview - 6](#w6)
